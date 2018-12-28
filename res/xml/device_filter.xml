@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- USB MIDI Standard -->
+	<usb-device class="1" subclass="3" />
+	<!-- YAMAHA -->
+	<usb-device vendor-id="1177" />
+	<!-- Roland -->
+	<usb-device vendor-id="1410" />
+	<!-- MOTU -->
+	<usb-device vendor-id="2045" />
+	<!-- vmeter -->
+	<usb-device vendor-id="5840" />
+	<!-- korg -->
+	<usb-device vendor-id="2372" />
+	<!-- CME -->
+	<usb-device vendor-id="9615" />
+	<usb-device vendor-id="28932" />
+	<!-- AKAI -->
+	<usb-device vendor-id="2536" />
+	<!-- KAT -->
+	<usb-device vendor-id="2663" />
+		<!-- Alesis -->
+	<usb-device vendor-id="5042" />
+	<!-- Midiplus -->
+	<usb-device vendor-id="6860" />
+	<!-- Midiman (M-Audio) -->
+	<usb-device vendor-id="1891" />
+	<!-- Novation -->
+	<usb-device vendor-id="4661" />
+	<!-- Acorn Instruments (Nektar) -->
+	<!-- <usb-device vendor-id="" /> -->
+	<!-- Evolution Electronics -->
+	<usb-device vendor-id="2637" />
+	<!-- iCON -->
+	<usb-device vendor-id="7427" />
+	<!-- C-Thru Music -->
+	<usb-device vendor-id="7447" />
+	<!--  Behringer -->
+	<usb-device vendor-id="5015" />
+	<!--  Casio -->
+	<usb-device vendor-id="1999" />
+	<!--  IK Multimedia -->
+	<usb-device vendor-id="9999" />
+</resources>

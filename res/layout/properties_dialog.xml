@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/mainLayout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:background="@drawable/dialog_background">
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:id="@+id/titleText" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:gravity="center" android:shadowColor="#404040"
+			android:shadowDx="1" android:shadowDy="1" android:shadowRadius="1"
+			android:text="Properties" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textSize="30dp" android:textStyle="bold" />
+		<ScrollView android:id="@+id/scrollView1"
+			android:layout_width="wrap_content" android:layout_height="match_parent">
+			<LinearLayout android:layout_width="match_parent"
+				android:layout_height="match_parent" android:orientation="vertical">
+				<LinearLayout android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<TextView android:id="@+id/TextView02"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="Prop 1:" android:textAppearance="?android:attr/textAppearanceMedium" />
+					<EditText android:id="@+id/EditText02"
+						android:layout_width="300dp" android:layout_height="wrap_content"
+						android:layout_weight="1" />
+				</LinearLayout>
+				<LinearLayout android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<TextView android:id="@+id/textView1"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="Prop 1:" android:textAppearance="?android:attr/textAppearanceMedium" />
+					<EditText android:id="@+id/inputText"
+						android:layout_width="300dp" android:layout_height="wrap_content"
+						android:layout_weight="1">
+						<requestFocus />
+					</EditText>
+				</LinearLayout>
+			</LinearLayout>
+			<LinearLayout android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/controlTypeLabel"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="Prop 1:" android:textAppearance="?android:attr/textAppearanceMedium" />
+				<EditText android:id="@+id/EditText01"
+					android:layout_width="300dp" android:layout_height="wrap_content"
+					android:layout_weight="1" />
+			</LinearLayout>
+		</ScrollView>
+		<LinearLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="center"
+			android:paddingBottom="5dp" android:paddingTop="5dp">
+			<Button android:id="@+id/option1Button" android:layout_width="120dp"
+				android:layout_height="60dp" android:layout_gravity="center"
+				android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+				android:background="@drawable/theme_button" android:paddingLeft="12dp"
+				android:paddingRight="12dp" android:shadowColor="#888888"
+				android:shadowDx="-1" android:shadowDy="-1" android:shadowRadius="1"
+				android:text="Option 1" android:textSize="22dp" android:textStyle="bold" />
+			<Button android:id="@+id/option2Button" android:layout_width="120dp"
+				android:layout_height="60dp" android:layout_gravity="center"
+				android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+				android:background="@drawable/theme_button" android:paddingLeft="12dp"
+				android:paddingRight="12dp" android:shadowColor="#888888"
+				android:shadowDx="-1" android:shadowDy="-1" android:shadowRadius="1"
+				android:text="Option 2" android:textSize="22dp" android:textStyle="bold" />
+			<Button android:id="@+id/option3Button" android:layout_width="120dp"
+				android:layout_height="60dp" android:layout_gravity="center"
+				android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+				android:background="@drawable/theme_button" android:paddingLeft="12dp"
+				android:paddingRight="12dp" android:shadowColor="#888888"
+				android:shadowDx="-1" android:shadowDy="-1" android:shadowRadius="1"
+				android:text="Option 3" android:textSize="22dp" android:textStyle="bold" />
+		</LinearLayout>
+	</LinearLayout>
+</FrameLayout>

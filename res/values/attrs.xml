@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="SplitPaneLayout">
+		<attr name="orientation">
+			<enum name="horizontal" value="0" />
+			<enum name="vertical" value="1" />
+		</attr>
+		<attr name="splitterSize" format="dimension" />
+		<attr name="splitterMovable" format="boolean" />
+		<attr name="splitterPosition" format="dimension|fraction" />
+		<attr name="splitterBackground" format="reference|color" />
+		<attr name="splitterDraggingBackground" format="reference|color" />
+	</declare-styleable>
+	<declare-styleable name="NumberPicker">
+		<attr name="rangeStart" format="integer|reference" />
+		<attr name="rangeEnd" format="integer|reference" />
+		<attr name="speed" format="integer|reference" />
+		<attr name="current" format="integer|reference" />
+		<attr name="displayedValues" format="reference" />
+		<attr name="android:orientation" />
+	</declare-styleable>
+	<!-- 
+	<declare-styleable name="de.viktorreiser.toolbox.widget.NumberPicker">
+		<attr name="rangeStart" format="integer|reference" />
+		<attr name="rangeEnd" format="integer|reference" />
+		<attr name="speed" format="integer|reference" />
+		<attr name="current" format="integer|reference" />
+		<attr name="displayedValues" format="reference" />
+		<attr name="android:orientation" />
+	</declare-styleable>
+	-->
+	<declare-styleable name="RangeSlider">
+		<attr name="minValue" format="integer" />
+		<attr name="maxValue" format="integer" />
+		<attr name="thumb1Value" format="integer" />
+		<attr name="thumb2Value" format="integer" />
+	</declare-styleable>
+	<declare-styleable name="ControlLabel">
+		<attr name="control" format="integer" />
+	</declare-styleable>
+	<attr name="sectionListView.sectionTextViewPadding" format="dimension" />
+	<attr name="sectionListView.sectionTextViewTextColor" format="color" />
+	<attr name="sectionListView.sectionTextViewTextSize" format="dimension" />
+
+	<attr name="sectionListView.sectionItemPadding" format="dimension" />
+	<attr name="sectionListView.sectionItemBackground" format="color|reference" />
+
+    <attr name="sectionListView.listTextViewPadding" format="dimension" />
+    <attr name="sectionListView.listTextViewTextColor" format="color" />
+    <attr name="sectionListView.listTextViewTextSize" format="dimension" />
+
+    <attr name="sectionListView.listItemPadding" format="dimension" />
+    <attr name="sectionListView.listItemBackground" format="color|reference" />
+
+</resources>
