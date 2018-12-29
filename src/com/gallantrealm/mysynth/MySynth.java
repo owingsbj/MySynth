@@ -2,8 +2,6 @@ package com.gallantrealm.mysynth;
 
 import java.io.IOException;
 
-import com.gallantrealm.mysynth.Instrument;
-
 public interface MySynth {
 	
 	public interface Callbacks {

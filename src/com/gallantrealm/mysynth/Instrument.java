@@ -22,6 +22,26 @@ public abstract class Instrument implements Serializable {
 	public abstract void terminate();
 
 	public abstract boolean isSounding();
+	
+	public abstract  void setSustaining(boolean sustaining);
+	
+	public abstract boolean isSustaining();
+	
+	public abstract void notePress(int note, float velocity);
 
-	public abstract void generate();
+	public abstract void noteRelease(int note);
+
+	public abstract void pitchBend(float bend);
+		
+	public abstract void expression(float amount);
+
+	public abstract void pressure(int voice, float amount);
+
+	public abstract void pressure(float amount);
+
+	public abstract void updateCC(int control, double value);
+	
+	public abstract void midiclock();
+
+	public abstract void generate(float[] output);
 }
