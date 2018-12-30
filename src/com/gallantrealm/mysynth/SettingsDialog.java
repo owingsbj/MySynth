@@ -1,7 +1,5 @@
 package com.gallantrealm.mysynth;
 
-import com.zeemote.zc.event.ButtonEvent;
-import com.zeemote.zc.event.IButtonListener;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SettingsDialog extends Dialog implements IButtonListener {
+public class SettingsDialog extends Dialog {
 	ClientModel clientModel = ClientModel.getClientModel();
 
 	TextView titleText;
@@ -152,29 +150,6 @@ public class SettingsDialog extends Dialog implements IButtonListener {
 
 	public String getValue() {
 		return inputText.getText().toString();
-	}
-
-	boolean controllerWasPressed;
-
-	@Override
-	public void buttonPressed(ButtonEvent buttonEvent) {
-		controllerWasPressed = true;
-	}
-
-	@Override
-	public void buttonReleased(ButtonEvent buttonEvent) {
-		if (controllerWasPressed) {
-			controllerWasPressed = false;
-			if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_A) {
-				buttonPressed = 0;
-				SettingsDialog.this.dismiss();
-				SettingsDialog.this.cancel();
-			} else if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_B) {
-				buttonPressed = options.length - 1;
-				SettingsDialog.this.dismiss();
-				SettingsDialog.this.cancel();
-			}
-		}
 	}
 
 }

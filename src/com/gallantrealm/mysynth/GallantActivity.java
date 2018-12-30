@@ -3,7 +3,6 @@ package com.gallantrealm.mysynth;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -13,13 +12,11 @@ import android.widget.RadioButton;
 /**
  * This activity can be subclassed for menus within a game. It provides controller support within the menus.
  */
-public class GallantActivity extends Activity implements com.bda.controller.ControllerListener {
+public class GallantActivity extends Activity {
 
 	public ClientModel clientModel = ClientModel.getClientModel();
 	public int songId = 0;
 
-	/** Moga support. */
-	public com.bda.controller.Controller mogaController;
 	View currentFocusView;
 
 	@Override
@@ -36,31 +33,21 @@ public class GallantActivity extends Activity implements com.bda.controller.Cont
 	protected void onStart() {
 		super.onStart();
 		clientModel.setContext(this);
-		try {
-			mogaController = com.bda.controller.Controller.getInstance(this);
-			mogaController.init();
-			mogaController.setListener(this, new Handler());
-		} catch (Exception e) { // fails on Android 5.0
-			System.err.println("You need to set android:targetSdkVersion=\"20\" for MOGA controller!");
-		}
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mogaController.exit();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mogaController.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mogaController.onResume();
 		clientModel.setContext(this);
 	}
 
@@ -136,30 +123,6 @@ public class GallantActivity extends Activity implements com.bda.controller.Cont
 	 */
 	public void onCancel() {
 		finish();
-	}
-
-	// ------------------------
-	// MOGA support
-	// ------------------------
-
-	@Override
-	public void onKeyEvent(com.bda.controller.KeyEvent event) {
-// if (currentDialog != null) {
-// currentDialog.dispatchKeyEvent(new KeyEvent(event.getAction(), event.getKeyCode()));
-// } else {
-// dispatchKeyEvent(new KeyEvent(event.getAction(), event.getKeyCode()));
-// }
-		if (event.getAction() == com.bda.controller.KeyEvent.ACTION_DOWN) {
-			sendKey(event.getKeyCode());
-		}
-	}
-
-	@Override
-	public void onMotionEvent(com.bda.controller.MotionEvent arg0) {
-	}
-
-	@Override
-	public void onStateEvent(com.bda.controller.StateEvent arg0) {
 	}
 
 }

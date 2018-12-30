@@ -1,8 +1,6 @@
 package com.gallantrealm.mysynth;
 
 import com.gallantrealm.android.Translator;
-import com.zeemote.zc.event.ButtonEvent;
-import com.zeemote.zc.event.IButtonListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,7 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SelectItemDialog extends Dialog implements IButtonListener {
+public class SelectItemDialog extends Dialog {
 	ClientModel clientModel = ClientModel.getClientModel();
 
 	TextView messageText;
@@ -214,29 +212,6 @@ public class SelectItemDialog extends Dialog implements IButtonListener {
 
 	public Class getItemSelected() {
 		return selectedItem;
-	}
-
-	boolean controllerWasPressed;
-
-	@Override
-	public void buttonPressed(ButtonEvent buttonEvent) {
-		controllerWasPressed = true;
-	}
-
-	@Override
-	public void buttonReleased(ButtonEvent buttonEvent) {
-		if (controllerWasPressed) {
-			controllerWasPressed = false;
-			if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_A) {
-				buttonPressed = 0;
-				SelectItemDialog.this.dismiss();
-				SelectItemDialog.this.cancel();
-			} else if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_B) {
-				buttonPressed = options.length - 1;
-				SelectItemDialog.this.dismiss();
-				SelectItemDialog.this.cancel();
-			}
-		}
 	}
 
 }

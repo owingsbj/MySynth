@@ -1,8 +1,6 @@
 package com.gallantrealm.mysynth;
 
 import com.gallantrealm.android.Translator;
-import com.zeemote.zc.event.ButtonEvent;
-import com.zeemote.zc.event.IButtonListener;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,7 +9,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MessageDialog extends GallantDialog implements IButtonListener {
+public class MessageDialog extends GallantDialog {
 	ClientModel clientModel = ClientModel.getClientModel();
 
 	public TextView titleText;
@@ -156,29 +154,6 @@ public class MessageDialog extends GallantDialog implements IButtonListener {
 
 	public int getButtonPressed() {
 		return buttonPressed;
-	}
-
-	boolean controllerWasPressed;
-
-	@Override
-	public void buttonPressed(ButtonEvent buttonEvent) {
-		controllerWasPressed = true;
-	}
-
-	@Override
-	public void buttonReleased(ButtonEvent buttonEvent) {
-		if (controllerWasPressed) {
-			controllerWasPressed = false;
-			if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_A) {
-				buttonPressed = 0;
-				MessageDialog.this.dismiss();
-				MessageDialog.this.cancel();
-			} else if (buttonEvent.getButtonGameAction() == ButtonEvent.BUTTON_B) {
-				buttonPressed = options.length - 1;
-				MessageDialog.this.dismiss();
-				MessageDialog.this.cancel();
-			}
-		}
 	}
 
 	@Override
