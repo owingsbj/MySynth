@@ -2,8 +2,8 @@
 Common Android Synthesizer Framework
 
 Use MySynth to create your own Android music synthesizer app.  All of the JNI for using either OpenSL or AAudio is provided.
-All you need to do is implement the com.gallantrealm.mysynth.Instrument class to create the core of your instrument.  Then,
-use com.gallantrealm.mysynth.MySynth class to start and control the synthesizer.
+All you need to do is implement a subclass of AbstractInstrument and then create and control the synthesizer using the MySynth class.
+See the [MySynth wiki](https://github.com/owingsbj/MySynth/wiki) for more details.
 
 ## Acknowledgments
 
