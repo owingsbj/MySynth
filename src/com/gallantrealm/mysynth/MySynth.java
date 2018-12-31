@@ -5,6 +5,10 @@ import android.os.Build;
 
 public abstract class MySynth {
 
+	public static MySynth create() {
+		return MySynth.create(0, 0);
+	}
+	
 	public static MySynth create(int sampleRateReducer, int nbuffers) {
 		MySynth synth;
 		synchronized (MySynth.class) {
