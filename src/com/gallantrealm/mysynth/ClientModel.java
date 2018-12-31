@@ -7,8 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,8 +19,6 @@ import com.example.android.trivialdrivesample.util.IabResult;
 import com.example.android.trivialdrivesample.util.Purchase;
 import com.gallantrealm.mysynth.themes.DefaultTheme;
 import com.gallantrealm.mysynth.themes.Theme;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -630,18 +628,12 @@ public class ClientModel {
 	}
 
 	private void serializeObject(Object object, OutputStream os) throws Exception {
-//		ObjectOutputStream outStream = new ObjectOutputStream(os);
-//		try {
-//			outStream.writeObject(object);
-//		} finally {
-//			outStream.close();
-//		}
-
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		Gson gson = gsonBuilder.create();
-		String json = gson.toJson(object);
-		new OutputStreamWriter(os, "UTF-8").write(json);
-		os.close();
+		ObjectOutputStream outStream = new ObjectOutputStream(os);
+		try {
+			outStream.writeObject(object);
+		} finally {
+			outStream.close();
+		}
 	}
 
 	private Object deserializeObject(InputStream is) throws Exception {
