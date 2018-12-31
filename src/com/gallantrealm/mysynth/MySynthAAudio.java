@@ -9,7 +9,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 
-public final class MySynthAAudio implements MySynth {
+public final class MySynthAAudio extends MySynth {
 
 	static final int K64 = 65536;
 	static final int K32 = 32768;
@@ -52,6 +52,9 @@ public final class MySynthAAudio implements MySynth {
 		}
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		System.out.println("SAMPLE RATE = " + SAMPLE_RATE);
+		if (nbuffers <= 0) {
+			nbuffers = 5;  // a good default
+		}
 		System.out.println("Loading MySynthAAudio.so..");
 		try {
 			System.loadLibrary("MySynthAAudio");

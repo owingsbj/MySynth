@@ -1,67 +1,81 @@
 package com.gallantrealm.mysynth;
 
 import java.io.IOException;
+import android.os.Build;
 
-public interface MySynth {
-	
+public abstract class MySynth {
+
+	public static MySynth create(int sampleRateReducer, int nbuffers) {
+		MySynth synth;
+		synchronized (MySynth.class) {
+			// Determine if AAudio is available and stable. If so, use ModSynthAAudio. Else use ModSynthOpenSL
+			if (Build.VERSION.SDK_INT >= 27) {
+				synth = new MySynthAAudio(sampleRateReducer, nbuffers);
+			} else {
+				synth = new MySynthOpenSL(sampleRateReducer, nbuffers);
+			}
+		}
+		return synth;
+	}
+
 	public interface Callbacks {
 		public void updateLevels();
 	}
-	
-	void setCallbacks(Callbacks callbacks);
 
-	void destroy();
+	public abstract void setCallbacks(Callbacks callbacks);
 
-	void setInstrument(AbstractInstrument instrument);
+	public abstract void destroy();
 
-	AbstractInstrument getInstrument();
-	
-	void setScopeShowing(boolean scopeShowing);
+	public abstract void setInstrument(AbstractInstrument instrument);
 
-	void start() throws Exception;
+	public abstract AbstractInstrument getInstrument();
 
-	void stop();
-	
-	void pause();
-	
-	void resume();
+	public abstract void setScopeShowing(boolean scopeShowing);
 
-	void notePress(int note, float velocity);
+	public abstract void start() throws Exception;
 
-	void noteRelease(int note);
+	public abstract void stop();
 
-	void pitchBend(float bend);
+	public abstract void pause();
 
-	void expression(float amount);
+	public abstract void resume();
+
+	public abstract void notePress(int note, float velocity);
+
+	public abstract void noteRelease(int note);
+
+	public abstract void pitchBend(float bend);
+
+	public abstract void expression(float amount);
 
 	/**
 	 * This comes either from the on-screen keyboard (by moving finger up/down on key, or from a breath controller (the pressure of blowing).
 	 */
-	void pressure(int voice, float amount);
+	public abstract void pressure(int voice, float amount);
 
 	/**
 	 * Monophonic pressure, from breath controller.
 	 */
-	void pressure(float amount);
+	public abstract void pressure(float amount);
 
-	void setDamper(boolean damper);
+	public abstract void setDamper(boolean damper);
 
-	boolean getDamper();
+	public abstract boolean getDamper();
 
-	void allSoundOff();
+	public abstract void allSoundOff();
 
-	boolean startRecording();
+	public abstract boolean startRecording();
 
-	void stopRecording();
+	public abstract void stopRecording();
 
-	void playbackRecording();
+	public abstract void playbackRecording();
 
-	void saveRecording(String filename) throws IOException;
+	public abstract void saveRecording(String filename) throws IOException;
 
-	int getRecordTime();
+	public abstract int getRecordTime();
 
-	void updateCC(int control, double value);
-	
-	void midiclock();
+	public abstract void updateCC(int control, double value);
+
+	public abstract void midiclock();
 
 }

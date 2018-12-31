@@ -14,7 +14,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Build;
 
-public final class MySynthOpenSL implements MySynth {
+public final class MySynthOpenSL extends MySynth {
 
 	static final int K64 = 65536;
 	static final int K32 = 32768;
@@ -111,7 +111,7 @@ public final class MySynthOpenSL implements MySynth {
 		} else {
 			RATE_DIVISOR = 1;
 		}
-		this.nbuffers = Math.max(2, nbuffers); // minimum buffers for opensl is 2
+		this.nbuffers = Math.max(2, Math.min(10, nbuffers)); // minimum buffers for opensl is 2, max is 10
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		if (Build.VERSION.SDK_INT >= 17) {
 			System.out.println("SDK is >= 17");
