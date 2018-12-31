@@ -13,7 +13,6 @@ MySynth contains modified versions of the following open source:
 - _USB-MIDI-Driver_ by Kaoru Shoji.  The current original is at https://github.com/kshoji/USB-MIDI-Driver.   Apache License, Version 2.0
 - _javax.sound.midi porting for Android_ also by Kaoru Shoji.  The current original is at https://github.com/kshoji/javax.sound.midi-for-Android.  Apache License, Version 2.0
 - _android-toolbox_ by Victor Reiser.  The current original is at https://github.com/Knickedi/android-toolbox.  MIT License. 
-- _Android Color Picker_ by Randy Sugianto (Yuku).  The current original is at https://github.com/yukuku/ambilwarna.  Apache License, Version 2.0.
 - _Java Wav File IO_ by Dr. Andrew Greensted.  At http://www.labbookpages.co.uk/audio/javaWavFiles.html.  License at http://www.labbookpages.co.uk/home/licences.html.
 
 I've left the original package names should you want to compare and update.  I highly appreciate the efforts of these developers and their generous donation to the open source community.
