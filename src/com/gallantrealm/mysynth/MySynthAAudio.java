@@ -28,7 +28,7 @@ public final class MySynthAAudio implements MySynth {
 	final int framesPerBuffer;
 	int desiredBuffsize;
 
-	Instrument instrument;
+	AbstractInstrument instrument;
 
 	public boolean scopeShowing;
 
@@ -52,12 +52,12 @@ public final class MySynthAAudio implements MySynth {
 		}
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		System.out.println("SAMPLE RATE = " + SAMPLE_RATE);
-		System.out.println("Loading ModSynthAAudio.so..");
+		System.out.println("Loading MySynthAAudio.so..");
 		try {
-			System.loadLibrary("ModSynthAAudio");
-			System.out.println("ModSynthAAudio.so has been loaded");
+			System.loadLibrary("MySynthAAudio");
+			System.out.println("MySynthAAudio.so has been loaded");
 		} catch (Throwable t) {
-			System.out.println("ModSynthAAudio.so failed to load");
+			System.out.println("MySynthAAudio.so failed to load");
 		}
 		int latency;
 
@@ -67,13 +67,13 @@ public final class MySynthAAudio implements MySynth {
 		String nativeSampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
 		framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
 		// for AAudio, the framesPerBuffer is a minimum, okay to exceed it
-		
+
 		// Note: a frame is 4 bytes long (2 bytes for each channel)
 		System.out.println("AudioManager says.. NativeSampleRate: " + nativeSampleRate + "  FramesPerBuffer: " + framesPerBuffer);
 		desiredBuffsize = framesPerBuffer * 4 * nbuffers; // used to also divide by rate divisor ( / RATE_DIVISOR; )
 
 		latency = desiredBuffsize / 4 * 1000 / SAMPLE_RATE;
-		System.out.println("ModSynth samplerate = " + SAMPLE_RATE + "  stereo pcm16 desiredBuffSize = " + desiredBuffsize + "  for a latency of " + latency + "ms");
+		System.out.println("MySynth samplerate = " + SAMPLE_RATE + "  stereo pcm16 desiredBuffSize = " + desiredBuffsize + "  for a latency of " + latency + "ms");
 
 		// Allocate the buffer
 		buffer = new short[framesPerBuffer * 4 * 25];
@@ -81,8 +81,8 @@ public final class MySynthAAudio implements MySynth {
 	}
 
 	@Override
-	public void setInstrument(Instrument instrument) {
-		System.out.println(">>ModSynthAAudio.setInstrument");
+	public void setInstrument(AbstractInstrument instrument) {
+		System.out.println(">>MySynthAAudio.setInstrument");
 
 		if (this.instrument != null) {
 			synchronized (this.instrument) {
@@ -94,7 +94,7 @@ public final class MySynthAAudio implements MySynth {
 			instrument.initialize(SAMPLE_RATE);
 		}
 		this.instrument = instrument;
-		System.out.println("<<ModSynthAAudio.setInstrument");
+		System.out.println("<<MySynthAAudio.setInstrument");
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public final class MySynthAAudio implements MySynth {
 	}
 
 	@Override
-	public Instrument getInstrument() {
+	public AbstractInstrument getInstrument() {
 		return instrument;
 	}
 
@@ -120,7 +120,7 @@ public final class MySynthAAudio implements MySynth {
 		if (!isStarted) {
 			firstTime = true;
 			// Start up things on the native side
-			System.out.println("Calling nativeStart("+SAMPLE_RATE+",buffer,"+desiredBuffsize+","+(buffer.length/2)+")");
+			System.out.println("Calling nativeStart(" + SAMPLE_RATE + ",buffer," + desiredBuffsize + "," + (buffer.length / 2) + ")");
 			int rc = nativeStart(SAMPLE_RATE, buffer, desiredBuffsize, buffer.length / 2);
 			if (rc == 0) {
 				System.out.println("nativeStart completed successfully");
@@ -315,7 +315,7 @@ public final class MySynthAAudio implements MySynth {
 			instrument.updateCC(control, value);
 		}
 	}
-	
+
 	@Override
 	public void midiclock() {
 		if (instrument != null && !instrument.isEditing()) {
@@ -355,12 +355,12 @@ public final class MySynthAAudio implements MySynth {
 				}
 				myPriority = android.os.Process.getThreadPriority(android.os.Process.myTid());
 				System.out.println("playerCallback adjusted thread priority is " + myPriority);
-				nativeSetAffinity(Runtime.getRuntime().availableProcessors() -1);
+				nativeSetAffinity(Runtime.getRuntime().availableProcessors() - 1);
 			}
 			firstTime = false;
 		}
-		if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
-			try {
+		try {
+			if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
 				for (int i = 0; i < numFrames; i++) {
 					instrument.generate(output);
 					double left = output[0];
@@ -416,16 +416,16 @@ public final class MySynthAAudio implements MySynth {
 //						}
 //					}
 				}
-			} catch (Throwable e) { // can happen due to instrument changes
-				e.printStackTrace();
+			} else { // no instrument or no module sounding.. saving some cpu
+				int bufsize = buffer.length;
+				for (int i = 0; i < bufsize; i++) {
+					buffer[i] = (short) 0;
+				}
 			}
-
-		} else { // no instrument or no module sounding.. saving some cpu
-			int bufsize = buffer.length;
-			for (int i = 0; i < bufsize; i++) {
-				buffer[i] = (short) 0;
-			}
+		} catch (Throwable e) { // can happen due to instrument changes
+			e.printStackTrace();
 		}
+
 	}
 
 }

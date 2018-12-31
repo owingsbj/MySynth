@@ -12,9 +12,9 @@ public interface MySynth {
 
 	void destroy();
 
-	void setInstrument(Instrument instrument);
+	void setInstrument(AbstractInstrument instrument);
 
-	Instrument getInstrument();
+	AbstractInstrument getInstrument();
 	
 	void setScopeShowing(boolean scopeShowing);
 

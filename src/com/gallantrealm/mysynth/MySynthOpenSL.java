@@ -52,7 +52,7 @@ public final class MySynthOpenSL implements MySynth {
 	final int samplesPerBuff;
 	final int nbuffers;
 
-	Instrument instrument;
+	AbstractInstrument instrument;
 
 	// Note: if you reintroduce quietcycles remember pad and keyless sequencers
 
@@ -87,7 +87,7 @@ public final class MySynthOpenSL implements MySynth {
 				System.out.println("SynthThread adjusted thread priority is " + myPriority);
 			}
 			// not seeing performance change with setting affinity for opensl
-			nativeSetAffinity(Runtime.getRuntime().availableProcessors() -1);
+			nativeSetAffinity(Runtime.getRuntime().availableProcessors() - 1);
 			try {
 				while (isRunning) { // nativeEnqueue throttles this loop
 					play();
@@ -111,7 +111,7 @@ public final class MySynthOpenSL implements MySynth {
 		} else {
 			RATE_DIVISOR = 1;
 		}
-		this.nbuffers = Math.max(2, nbuffers);  // minimum buffers for opensl is 2
+		this.nbuffers = Math.max(2, nbuffers); // minimum buffers for opensl is 2
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		if (Build.VERSION.SDK_INT >= 17) {
 			System.out.println("SDK is >= 17");
@@ -122,12 +122,12 @@ public final class MySynthOpenSL implements MySynth {
 			System.out.println("SDK is < 17, no low latency possible");
 			hasLowLatencySupport = false;
 		}
-		System.out.println("Loading ModSynthOpenSL.so..");
+		System.out.println("Loading MySynthOpenSL.so..");
 		try {
-			System.loadLibrary("ModSynthOpenSL");
-			System.out.println("ModSynthOpenSL.so has been loaded");
+			System.loadLibrary("MySynthOpenSL");
+			System.out.println("MySynthOpenSL.so has been loaded");
 		} catch (Throwable t) {
-			System.out.println("ModSynthOpenSL.so failed to load");
+			System.out.println("MySynthOpenSL.so failed to load");
 		}
 		int latency;
 
@@ -150,7 +150,7 @@ public final class MySynthOpenSL implements MySynth {
 		}
 
 		latency = buffsize / 4 * 1000 / SAMPLE_RATE;
-		System.out.println("ModSynth samplerate = " + SAMPLE_RATE + "  stereo pcm16 buffSize = " + buffsize + "  for a latency of " + latency + "ms");
+		System.out.println("MySynth samplerate = " + SAMPLE_RATE + "  stereo pcm16 buffSize = " + buffsize + "  for a latency of " + latency + "ms");
 		System.out.println("Using " + nbuffers + " buffers.");
 
 		// Allocate the buffers
@@ -208,8 +208,8 @@ public final class MySynthOpenSL implements MySynth {
 	}
 
 	@Override
-	public void setInstrument(Instrument instrument) {
-		System.out.println(">>ModSynthOpenSL.setInstrument");
+	public void setInstrument(AbstractInstrument instrument) {
+		System.out.println(">>MySynthOpenSL.setInstrument");
 
 		if (this.instrument != null) {
 			synchronized (this.instrument) {
@@ -221,7 +221,7 @@ public final class MySynthOpenSL implements MySynth {
 			instrument.initialize(SAMPLE_RATE);
 		}
 		this.instrument = instrument;
-		System.out.println("<<ModSynthOpenSL.setInstrument");
+		System.out.println("<<MySynthOpenSL.setInstrument");
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public final class MySynthOpenSL implements MySynth {
 	}
 
 	@Override
-	public Instrument getInstrument() {
+	public AbstractInstrument getInstrument() {
 		return instrument;
 	}
 
@@ -246,7 +246,7 @@ public final class MySynthOpenSL implements MySynth {
 
 	@Override
 	public void start() throws Exception {
-		System.out.println(">>ModSynthOpenSL.start");
+		System.out.println(">>MySynthOpenSL.start");
 		if (!isRunning) {
 			synthThread = new SynthThread();
 			// Start up things on the native side
@@ -263,12 +263,12 @@ public final class MySynthOpenSL implements MySynth {
 				throw new Exception("Synthesis failed to start (rc=" + rc + ").  There is likely a problem supporting your device.  Email support@gallantrealm.com for help. ");
 			}
 		}
-		System.out.println("<<ModSynthOpenSL.start");
+		System.out.println("<<MySynthOpenSL.start");
 	}
 
 	@Override
 	public void stop() {
-		System.out.println(">>ModSynthOpenSL.stop");
+		System.out.println(">>MySynthOpenSL.stop");
 		if (isRunning) {
 			isRunning = false;
 			try {
@@ -281,30 +281,30 @@ public final class MySynthOpenSL implements MySynth {
 			synthThread.interrupt();
 			System.out.println("synthThread interrupted");
 		}
-		System.out.println("<<ModSynthOpenSL.stop");
+		System.out.println("<<MySynthOpenSL.stop");
 	}
 
 	@Override
 	public void pause() {
-		System.out.println(">>ModSynthOpenSL.pause");
+		System.out.println(">>MySynthOpenSL.pause");
 		if (isRunning) {
 			isRunning = false;
 			synthThread.interrupt();
 			System.out.println("synthThread interrupted");
 		}
-		System.out.println("<<ModSynthOpenSL.pause");
+		System.out.println("<<MySynthOpenSL.pause");
 	}
 
 	@Override
 	public void resume() {
-		System.out.println(">>ModSynthOpenSL.resume");
+		System.out.println(">>MySynthOpenSL.resume");
 		if (!isRunning) {
 			synthThread = new SynthThread();
 			isRunning = true;
 			synthThread.start();
 			System.out.println("SynthThread started");
 		}
-		System.out.println("<<ModSynthOpenSL.resume");
+		System.out.println("<<MySynthOpenSL.resume");
 	}
 
 	@Override
@@ -462,7 +462,7 @@ public final class MySynthOpenSL implements MySynth {
 
 	public native int nativeStart(int sampleRate, ShortBuffer buffer1, ShortBuffer buffer2, ShortBuffer buffer3, ShortBuffer buffer4, ShortBuffer buffer5, ShortBuffer buffer6, ShortBuffer buffer7, ShortBuffer buffer8, ShortBuffer buffer9,
 			ShortBuffer buffer10, int nbuffers, int bufferSize, boolean hasLowLatencySupport, int androidLevel);
-	
+
 	public native void nativeSetAffinity(int cpu);
 
 	public native void nativeEnqueue(int nBuffer);
@@ -472,13 +472,13 @@ public final class MySynthOpenSL implements MySynth {
 	float[] output = new float[2];
 
 	public final void play() {
-		if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
-			try {
+		try {
+			if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
 				for (int i = 0; i < samplesPerBuff; i++) {
 					if (!isRunning) {
 						return;
 					}
-					
+
 					instrument.generate(output);
 					double left = output[0];
 					double right = output[1];
@@ -563,65 +563,65 @@ public final class MySynthOpenSL implements MySynth {
 //						}
 //					}
 				}
-			} catch (Throwable e) { // can happen due to instrument changes
-				e.printStackTrace();
-			}
 
-			// copy to native buffer and enqueue
-			if (currentBuffer == 1) {
-				nativeBuffer1.rewind();
-				nativeBuffer1.put(buffer1);
-			} else if (currentBuffer == 2) {
-				nativeBuffer2.rewind();
-				nativeBuffer2.put(buffer2);
-			} else if (currentBuffer == 3) {
-				nativeBuffer3.rewind();
-				nativeBuffer3.put(buffer3);
-			} else if (currentBuffer == 4) {
-				nativeBuffer4.rewind();
-				nativeBuffer4.put(buffer4);
-			} else if (currentBuffer == 5) {
-				nativeBuffer5.rewind();
-				nativeBuffer5.put(buffer5);
-			} else if (currentBuffer == 6) {
-				nativeBuffer6.rewind();
-				nativeBuffer6.put(buffer6);
-			} else if (currentBuffer == 7) {
-				nativeBuffer7.rewind();
-				nativeBuffer7.put(buffer7);
-			} else if (currentBuffer == 8) {
-				nativeBuffer8.rewind();
-				nativeBuffer8.put(buffer8);
-			} else if (currentBuffer == 9) {
-				nativeBuffer9.rewind();
-				nativeBuffer9.put(buffer9);
-			} else if (currentBuffer == 10) {
-				nativeBuffer10.rewind();
-				nativeBuffer10.put(buffer10);
-			}
+				// copy to native buffer and enqueue
+				if (currentBuffer == 1) {
+					nativeBuffer1.rewind();
+					nativeBuffer1.put(buffer1);
+				} else if (currentBuffer == 2) {
+					nativeBuffer2.rewind();
+					nativeBuffer2.put(buffer2);
+				} else if (currentBuffer == 3) {
+					nativeBuffer3.rewind();
+					nativeBuffer3.put(buffer3);
+				} else if (currentBuffer == 4) {
+					nativeBuffer4.rewind();
+					nativeBuffer4.put(buffer4);
+				} else if (currentBuffer == 5) {
+					nativeBuffer5.rewind();
+					nativeBuffer5.put(buffer5);
+				} else if (currentBuffer == 6) {
+					nativeBuffer6.rewind();
+					nativeBuffer6.put(buffer6);
+				} else if (currentBuffer == 7) {
+					nativeBuffer7.rewind();
+					nativeBuffer7.put(buffer7);
+				} else if (currentBuffer == 8) {
+					nativeBuffer8.rewind();
+					nativeBuffer8.put(buffer8);
+				} else if (currentBuffer == 9) {
+					nativeBuffer9.rewind();
+					nativeBuffer9.put(buffer9);
+				} else if (currentBuffer == 10) {
+					nativeBuffer10.rewind();
+					nativeBuffer10.put(buffer10);
+				}
 
-			if (isRunning) {
-				nativeEnqueue(currentBuffer);
-			}
+				if (isRunning) {
+					nativeEnqueue(currentBuffer);
+				}
 
-			if (currentBuffer == nbuffers) {
+				if (currentBuffer == nbuffers) {
+					currentBuffer = 1;
+				} else {
+					currentBuffer += 1;
+				}
+
+			} else { // no instrument or quiet
 				currentBuffer = 1;
-			} else {
-				currentBuffer += 1;
-			}
-
-		} else { // no instrument or quiet
-			currentBuffer = 1;
-			try {
-				Thread.currentThread().sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				try {
+					Thread.currentThread().sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 //			int bufsize = buffer1.length;
 //			for (int i = 0; i < bufsize; i++) {
 //				buffer1[i] = (short) 0;
 //			}
+			}
+		} catch (Throwable e) { // can happen due to instrument changes
+			e.printStackTrace();
 		}
 
 	}
