@@ -106,6 +106,7 @@ public final class MySynthAAudio extends MySynth {
 			instrument.terminate();
 			instrument = null;
 		}
+		super.destroy();
 	}
 
 	@Override

@@ -230,6 +230,7 @@ public final class MySynthOpenSL extends MySynth {
 			instrument.terminate();
 			instrument = null;
 		}
+		super.destroy();
 	}
 
 	@Override
