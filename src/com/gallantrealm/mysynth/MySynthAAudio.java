@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import com.gallantrealm.android.Scope;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
@@ -31,6 +32,7 @@ public final class MySynthAAudio extends MySynth {
 	AbstractInstrument instrument;
 
 	public boolean scopeShowing;
+	public Scope scope;
 
 	boolean recording;
 	boolean replaying;
@@ -117,6 +119,11 @@ public final class MySynthAAudio extends MySynth {
 	@Override
 	public void setScopeShowing(boolean scopeShowing) {
 		this.scopeShowing = scopeShowing;
+	}
+	
+	@Override
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 
 	@Override
@@ -402,23 +409,11 @@ public final class MySynthAAudio extends MySynth {
 						}
 					}
 
-// TODO -- make scope available in mysynth
-//					if (scopeShowing && outputModule.viewer != null) {
-//						double scopeLevel = 0.0;
-//						if (outputModule.mod1 == null) {
-//							scopeLevel = left + right;
-//							scopeLevel /= 4.0;
-//						} else {
-//							for (int voice = 0; voice < voiceCount; voice++) {
-//								scopeLevel += outputModule.mod1.value[voice];
-//							}
-//							scopeLevel /= voiceCount * 2;
-//						}
-//						OutputViewer outputViewer = (OutputViewer) outputModule.viewer;
-//						if (outputViewer.scope != null) {
-//							outputViewer.scope.scope((float) scopeLevel);
-//						}
-//					}
+					if (scopeShowing && scope != null) {
+						double scopeLevel = (left + right) / 2;
+						scope.scope((float) scopeLevel);
+					}
+					
 				}
 			} else { // no instrument or no module sounding.. saving some cpu
 				int bufsize = buffer.length;

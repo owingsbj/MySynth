@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
+import com.gallantrealm.android.Scope;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -57,6 +58,7 @@ public final class MySynthOpenSL extends MySynth {
 	// Note: if you reintroduce quietcycles remember pad and keyless sequencers
 
 	public boolean scopeShowing;
+	public Scope scope;
 
 	boolean recording;
 	boolean replaying;
@@ -241,6 +243,11 @@ public final class MySynthOpenSL extends MySynth {
 	@Override
 	public void setScopeShowing(boolean scopeShowing) {
 		this.scopeShowing = scopeShowing;
+	}
+	
+	@Override
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 
 	SynthThread synthThread;
@@ -546,23 +553,11 @@ public final class MySynthOpenSL extends MySynth {
 						}
 					}
 
-// TODO - make scope available in mysynth
-//					if (scopeShowing && outputModule.viewer != null) {
-//						double scopeLevel = 0.0;
-//						if (outputModule.mod1 == null) {
-//							scopeLevel = left + right;
-//							scopeLevel /= 4.0;
-//						} else {
-//							for (int voice = 0; voice < voiceCount; voice++) {
-//								scopeLevel += outputModule.mod1.value[voice];
-//							}
-//							scopeLevel /= voiceCount * 2;
-//						}
-//						OutputViewer outputViewer = (OutputViewer) outputModule.viewer;
-//						if (outputViewer.scope != null) {
-//							outputViewer.scope.scope((float) scopeLevel);
-//						}
-//					}
+					if (scopeShowing && scope != null) {
+						double scopeLevel = (left + right) / 2;
+						scope.scope((float) scopeLevel);
+					}
+
 				}
 
 				// copy to native buffer and enqueue
