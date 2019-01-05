@@ -1,4 +1,4 @@
-package com.gallantrealm.mysynth;
+package com.gallantrealm.android;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -9,7 +9,6 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 
 public class GallantDialog extends Dialog {
-	ClientModel clientModel = ClientModel.getClientModel();
 
 	public GallantDialog(Context context) {
 		super(context);

@@ -21,7 +21,7 @@ public final class MySynthOpenSL extends MySynth {
 	static final int K32 = 32768;
 	static final int K16 = 16384;
 	static final int K8 = 8192;
-
+	
 	public final boolean hasLowLatencySupport;
 
 	public final int RATE_DIVISOR;
@@ -103,7 +103,8 @@ public final class MySynthOpenSL extends MySynth {
 	}
 
 	@SuppressLint("NewApi")
-	public MySynthOpenSL(int sampleRateReducer, int nbuffers) {
+	public MySynthOpenSL(Context context, int sampleRateReducer, int nbuffers) {
+		super(context);
 		if (sampleRateReducer == 0) {
 			RATE_DIVISOR = 1;
 		} else if (sampleRateReducer == 1) {
@@ -117,7 +118,7 @@ public final class MySynthOpenSL extends MySynth {
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		if (Build.VERSION.SDK_INT >= 17) {
 			System.out.println("SDK is >= 17");
-			PackageManager pm = ClientModel.getClientModel().getContext().getPackageManager();
+			PackageManager pm = context.getPackageManager();
 			hasLowLatencySupport = pm.hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY);
 			System.out.println("Has low latency support: " + hasLowLatencySupport);
 		} else {
@@ -135,7 +136,6 @@ public final class MySynthOpenSL extends MySynth {
 
 		// Determine optimal buffsize
 		int buffsize;
-		Context context = ClientModel.getClientModel().getContext();
 		if (Build.VERSION.SDK_INT >= 17) {
 			AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 			String nativeSampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);

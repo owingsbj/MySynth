@@ -19,7 +19,7 @@ public final class MySynthAAudio extends MySynth {
 
 	public final int RATE_DIVISOR;
 	public final int SAMPLE_RATE;
-
+	
 	Callbacks callbacks;
 
 	boolean isStarted = false;
@@ -42,7 +42,8 @@ public final class MySynthAAudio extends MySynth {
 	short[] recordBuffer;
 
 	@SuppressLint("NewApi")
-	public MySynthAAudio(int sampleRateReducer, int nbuffers) {
+	public MySynthAAudio(Context context, int sampleRateReducer, int nbuffers) {
+		super(context);
 		if (sampleRateReducer == 0) {
 			RATE_DIVISOR = 1;
 		} else if (sampleRateReducer == 1) {
@@ -67,7 +68,6 @@ public final class MySynthAAudio extends MySynth {
 		int latency;
 
 		// Determine optimal buffsize
-		Context context = ClientModel.getClientModel().getContext();
 		AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		String nativeSampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
 		framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));

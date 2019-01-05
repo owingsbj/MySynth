@@ -45,12 +45,11 @@ public abstract class MySynth implements OnMidiDeviceDetachedListener, OnMidiDev
 		synchronized (MySynth.class) {
 			// Determine if AAudio is available and stable. If so, use ModSynthAAudio. Else use ModSynthOpenSL
 			if (Build.VERSION.SDK_INT >= 27) {
-				synth = new MySynthAAudio(sampleRateReducer, nbuffers);
+				synth = new MySynthAAudio(context, sampleRateReducer, nbuffers);
 			} else {
-				synth = new MySynthOpenSL(sampleRateReducer, nbuffers);
+				synth = new MySynthOpenSL(context, sampleRateReducer, nbuffers);
 			}
 		}
-		synth.context = context;
 		synth.midiInitialize();
 		return synth;
 	}
@@ -59,8 +58,12 @@ public abstract class MySynth implements OnMidiDeviceDetachedListener, OnMidiDev
 		public void updateLevels();
 	}
 	
-	private Context context;
-
+	Context context;
+	
+	public MySynth(Context context) {
+		this.context = context;
+	}
+	
 	public abstract void setCallbacks(Callbacks callbacks);
 
 	public void destroy() {

@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import com.gallantrealm.mysynth.GallantDialog;
-import com.gallantrealm.mysynth.MessageDialog;
 import com.gallantrealm.mysynth.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -27,7 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FileSelectorDialog extends GallantDialog {
+public class FileSelectorDialog extends Dialog {
 
 	public interface SelectionListener {
 		public void onFileselected(String filename);

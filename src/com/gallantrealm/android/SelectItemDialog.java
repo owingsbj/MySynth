@@ -1,9 +1,9 @@
-package com.gallantrealm.mysynth;
+package com.gallantrealm.android;
 
-import com.gallantrealm.android.Translator;
+import com.gallantrealm.android.themes.Theme;
+import com.gallantrealm.mysynth.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,8 +20,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SelectItemDialog extends Dialog {
-	ClientModel clientModel = ClientModel.getClientModel();
+public class SelectItemDialog extends GallantDialog {
 
 	TextView messageText;
 	GridView itemsView;
@@ -63,7 +62,7 @@ public class SelectItemDialog extends Dialog {
 		option2Button = (Button) findViewById(R.id.option2Button);
 		option3Button = (Button) findViewById(R.id.option3Button);
 
-		Typeface typeface = clientModel.getTypeface(getContext());
+		Typeface typeface = Theme.getTheme().getTypeface(getContext());
 		if (typeface != null) {
 			messageText.setTypeface(typeface);
 			option1Button.setTypeface(typeface);
@@ -71,7 +70,7 @@ public class SelectItemDialog extends Dialog {
 			option3Button.setTypeface(typeface);
 		}
 
-		int styleId = clientModel.getTheme().buttonStyleId;
+		int styleId = Theme.getTheme().buttonStyleId;
 		if (styleId != 0) {
 			option1Button.setBackgroundResource(styleId);
 			option2Button.setBackgroundResource(styleId);

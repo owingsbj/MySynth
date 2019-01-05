@@ -1,4 +1,4 @@
-package com.gallantrealm.mysynth;
+package com.gallantrealm.android;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -14,7 +14,6 @@ import android.widget.RadioButton;
  */
 public class GallantActivity extends Activity {
 
-	public ClientModel clientModel = ClientModel.getClientModel();
 	public int songId = 0;
 
 	View currentFocusView;
@@ -32,7 +31,6 @@ public class GallantActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		clientModel.setContext(this);
 	}
 
 	@Override
@@ -48,7 +46,6 @@ public class GallantActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		clientModel.setContext(this);
 	}
 
 	// ------------------------

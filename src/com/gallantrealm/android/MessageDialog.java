@@ -1,47 +1,62 @@
-package com.gallantrealm.mysynth;
+package com.gallantrealm.android;
 
-import com.gallantrealm.android.Translator;
-import android.app.Activity;
-import android.app.Dialog;
+import com.gallantrealm.android.themes.Theme;
+import com.gallantrealm.mysynth.R;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-public class InputDialog extends Dialog {
-	ClientModel clientModel = ClientModel.getClientModel();
+public class MessageDialog extends GallantDialog {
 
-	TextView titleText;
-	TextView messageText;
-	EditText inputText;
+	public TextView titleText;
+	public TextView messageText;
 	Button option1Button;
 	Button option2Button;
 	Button option3Button;
 	int buttonPressed = -1;
 	String title;
 	String message;
-	String initialValue;
 	String[] options;
-	Activity activity;
+	String checkinMessage;
+	String leaderboardId;
+	float score;
+	String scoreMsg;
+	Context context;
 
-	public InputDialog(Context context, String title, String message, String initialValue, String[] options) {
+	public MessageDialog(Context context, String title, String message, String[] options) {
+		this(context, title, message, options, null);
+	}
+
+	public MessageDialog(Context context, String title, String message, String[] options, String checkinMessage) {
 		super(context, R.style.Theme_Dialog);
-		activity = (Activity) context;
+		this.context = context;
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.title = title;
 		this.message = message;
-		this.initialValue = initialValue;
+		this.checkinMessage = checkinMessage;
+		this.leaderboardId = null;
 		this.options = options;
-		setContentView(R.layout.input_dialog);
+		setContentView(R.layout.message_dialog);
 		setCancelable(false);
 		setCanceledOnTouchOutside(false);
+	}
+
+	public MessageDialog(Context context, String title, String message, String[] options, String leaderboardId, float score, String scoreMsg) {
+		super(context, R.style.Theme_Dialog);
+		this.context = context;
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.title = title;
+		this.message = message;
+		this.leaderboardId = leaderboardId;
+		this.checkinMessage = null;
+		this.score = score;
+		this.scoreMsg = scoreMsg;
+		this.options = options;
+		setContentView(R.layout.message_dialog);
 	}
 
 	@Override
@@ -50,17 +65,24 @@ public class InputDialog extends Dialog {
 
 		titleText = (TextView) findViewById(R.id.titleText);
 		messageText = (TextView) findViewById(R.id.messageText);
-		inputText = (EditText) findViewById(R.id.inputText);
 		option1Button = (Button) findViewById(R.id.option1Button);
 		option2Button = (Button) findViewById(R.id.option2Button);
 		option3Button = (Button) findViewById(R.id.option3Button);
 
-		Typeface typeface = clientModel.getTypeface(getContext());
+		Typeface typeface = Theme.getTheme().getTypeface(getContext());
 		if (typeface != null) {
 			titleText.setTypeface(typeface);
+			messageText.setTypeface(typeface);
 			option1Button.setTypeface(typeface);
 			option2Button.setTypeface(typeface);
 			option3Button.setTypeface(typeface);
+		}
+
+		int styleId = Theme.getTheme().buttonStyleId;
+		if (styleId != 0) {
+			option1Button.setBackgroundResource(styleId);
+			option2Button.setBackgroundResource(styleId);
+			option3Button.setBackgroundResource(styleId);
 		}
 
 		if (title != null) {
@@ -71,20 +93,7 @@ public class InputDialog extends Dialog {
 		}
 
 		messageText.setText(message);
-		inputText.setText(initialValue);
-		inputText.selectAll();
-		inputText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus) {
-					InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.showSoftInput(inputText, InputMethodManager.SHOW_IMPLICIT);
-				}
-			}
-		});
-		inputText.requestFocus();
-
+		
 		option1Button.setVisibility(View.GONE);
 		option2Button.setVisibility(View.GONE);
 		option3Button.setVisibility(View.GONE);
@@ -105,38 +114,29 @@ public class InputDialog extends Dialog {
 				}
 			}
 		}
-		option1Button.setOnTouchListener(new OnTouchListener() {
-
+		option1Button.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onClick(View v) {
 				buttonPressed = 0;
-				InputDialog.this.dismiss();
-				InputDialog.this.cancel();
-				return true;
+				MessageDialog.this.dismiss();
+				MessageDialog.this.cancel();
 			}
-
 		});
-		option2Button.setOnTouchListener(new OnTouchListener() {
-
+		option2Button.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onClick(View v) {
 				buttonPressed = 1;
-				InputDialog.this.dismiss();
-				InputDialog.this.cancel();
-				return true;
+				MessageDialog.this.dismiss();
+				MessageDialog.this.cancel();
 			}
-
 		});
-		option3Button.setOnTouchListener(new OnTouchListener() {
-
+		option3Button.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onClick(View v) {
 				buttonPressed = 2;
-				InputDialog.this.dismiss();
-				InputDialog.this.cancel();
-				return true;
+				MessageDialog.this.dismiss();
+				MessageDialog.this.cancel();
 			}
-
 		});
 
 		Translator.getTranslator().translate(this.getWindow().getDecorView());
@@ -156,8 +156,20 @@ public class InputDialog extends Dialog {
 		return buttonPressed;
 	}
 
-	public String getValue() {
-		return inputText.getText().toString();
+	@Override
+	public void onOkay() {
+		buttonPressed = 0;
+		super.onOkay();
+	}
+
+	@Override
+	public void onCancel() {
+		if (options == null) {
+			buttonPressed = 0;
+		} else {
+			buttonPressed = options.length - 1;
+		}
+		super.onCancel();
 	}
 
 }
