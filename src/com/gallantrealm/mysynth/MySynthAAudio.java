@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import com.gallantrealm.android.Scope;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
@@ -20,8 +19,6 @@ public final class MySynthAAudio extends MySynth {
 	public final int RATE_DIVISOR;
 	public final int SAMPLE_RATE;
 	
-	Callbacks callbacks;
-
 	boolean isStarted = false;
 	boolean isRunning = false;
 
@@ -30,9 +27,6 @@ public final class MySynthAAudio extends MySynth {
 	int desiredBuffsize;
 
 	AbstractInstrument instrument;
-
-	public boolean scopeShowing;
-	public Scope scope;
 
 	boolean recording;
 	boolean replaying;
@@ -114,16 +108,6 @@ public final class MySynthAAudio extends MySynth {
 	@Override
 	public AbstractInstrument getInstrument() {
 		return instrument;
-	}
-
-	@Override
-	public void setScopeShowing(boolean scopeShowing) {
-		this.scopeShowing = scopeShowing;
-	}
-	
-	@Override
-	public void setScope(Scope scope) {
-		this.scope = scope;
 	}
 
 	@Override
@@ -334,11 +318,6 @@ public final class MySynthAAudio extends MySynth {
 		}
 	}
 
-	@Override
-	public void setCallbacks(Callbacks callbacks) {
-		this.callbacks = callbacks;
-	}
-
 	public native int nativeStart(int sampleRate, short[] buffer, int desiredBufferSize, int maxBufferSize);
 
 	public native void nativeSetAffinity(int cpu);
@@ -374,18 +353,18 @@ public final class MySynthAAudio extends MySynth {
 			if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
 				for (int i = 0; i < numFrames; i++) {
 					instrument.generate(output);
-					double left = output[0];
-					double right = output[1];
+					float left = output[0];
+					float right = output[1];
 
 					if (replaying && recordingIndex < maxRecordingIndex) {
 						left += recordBuffer[recordingIndex] / (float) K32;
 						right += recordBuffer[recordingIndex + 1] / (float) K32;
 					}
 
-					left = left > 1.0 ? 1.0 : left;
-					left = left < -1.0 ? -1.0 : left;
-					right = right > 1.0 ? 1.0 : right;
-					right = right < -1.0 ? -1.0 : right;
+					left = left > 1.0f ? 1.0f : left;
+					left = left < -1.0f ? -1.0f : left;
+					right = right > 1.0f ? 1.0f : right;
+					right = right < -1.0f ? -1.0f : right;
 
 					short sampleLeft = (short) (left * (K32 - 1));
 					short sampleRight = (short) (right * (K32 - 1));
@@ -409,9 +388,8 @@ public final class MySynthAAudio extends MySynth {
 						}
 					}
 
-					if (scopeShowing && scope != null) {
-						double scopeLevel = (left + right) / 2;
-						scope.scope((float) scopeLevel);
+					if (monitor != null) {
+						monitor.update(left, right);
 					}
 					
 				}

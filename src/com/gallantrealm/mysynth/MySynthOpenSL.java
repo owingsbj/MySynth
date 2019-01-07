@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
-import com.gallantrealm.android.Scope;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -55,21 +54,12 @@ public final class MySynthOpenSL extends MySynth {
 
 	AbstractInstrument instrument;
 
-	// Note: if you reintroduce quietcycles remember pad and keyless sequencers
-
-	public boolean scopeShowing;
-	public Scope scope;
-
 	boolean recording;
 	boolean replaying;
 	int recordingIndex;
 	int maxRecordingIndex;
 	int RECORDING_BUFFER_SIZE;
 	short[] recordBuffer;
-
-//	Semaphore emptyBuffers = new Semaphore(BUFFER_COUNT);
-
-	Callbacks callbacks;
 
 	public class SynthThread extends Thread {
 
@@ -238,16 +228,6 @@ public final class MySynthOpenSL extends MySynth {
 	@Override
 	public AbstractInstrument getInstrument() {
 		return instrument;
-	}
-
-	@Override
-	public void setScopeShowing(boolean scopeShowing) {
-		this.scopeShowing = scopeShowing;
-	}
-	
-	@Override
-	public void setScope(Scope scope) {
-		this.scope = scope;
 	}
 
 	SynthThread synthThread;
@@ -488,8 +468,8 @@ public final class MySynthOpenSL extends MySynth {
 					}
 
 					instrument.generate(output);
-					double left = output[0];
-					double right = output[1];
+					float left = output[0];
+					float right = output[1];
 
 					if (replaying && recordingIndex < maxRecordingIndex) {
 						left += recordBuffer[recordingIndex] / (float) K32;
@@ -553,9 +533,8 @@ public final class MySynthOpenSL extends MySynth {
 						}
 					}
 
-					if (scopeShowing && scope != null) {
-						double scopeLevel = (left + right) / 2;
-						scope.scope((float) scopeLevel);
+					if (monitor != null) {
+						monitor.update(left, right);
 					}
 
 				}
@@ -627,11 +606,6 @@ public final class MySynthOpenSL extends MySynth {
 		if (instrument != null && !instrument.isEditing()) {
 			instrument.updateCC(control, value);
 		}
-	}
-
-	@Override
-	public void setCallbacks(Callbacks callbacks) {
-		this.callbacks = callbacks;
 	}
 
 	@Override

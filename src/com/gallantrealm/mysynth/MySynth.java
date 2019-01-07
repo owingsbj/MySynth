@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import com.gallantrealm.android.Scope;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -54,17 +53,24 @@ public abstract class MySynth implements OnMidiDeviceDetachedListener, OnMidiDev
 		return synth;
 	}
 	
-	public interface Callbacks {
-		public void updateLevels();
+	public interface Monitor {
+		public void update(float left, float right);
 	}
 	
 	Context context;
+	public Monitor monitor;
 	
 	public MySynth(Context context) {
 		this.context = context;
 	}
 	
-	public abstract void setCallbacks(Callbacks callbacks);
+	/**
+	 * Sets the monitor callback.  This is called on each frame to update monitors (scopes, etc).  Note: Since the monitor
+	 * is run on every frame, it should run FAST!
+	 */
+	public void setMonitor(Monitor monitor) {
+		this.monitor = monitor;
+	}
 
 	public void destroy() {
 		midiTerminate();
@@ -73,10 +79,6 @@ public abstract class MySynth implements OnMidiDeviceDetachedListener, OnMidiDev
 	public abstract void setInstrument(AbstractInstrument instrument);
 
 	public abstract AbstractInstrument getInstrument();
-
-	public abstract void setScopeShowing(boolean scopeShowing);
-	
-	public abstract void setScope(Scope scope);
 
 	public abstract void start() throws Exception;
 
