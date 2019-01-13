@@ -41,4 +41,6 @@
 	<usb-device vendor-id="1999" />
 	<!--  IK Multimedia -->
 	<usb-device vendor-id="9999" />
+	<!--  Studiologic -->
+	<usb-device vendor-id="9516" />
 </resources>
