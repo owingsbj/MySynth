@@ -1,0 +1,115 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* .idea\
+* .idea\codeStyles\
+* .idea\codeStyles\Project.xml
+* .idea\misc.xml
+* .idea\modules.xml
+* .idea\vcs.xml
+* AndroidManifest.xml
+* LICENSE
+* README.md
+* jni_aaudio\
+* jni_aaudio\jni\
+* jni_aaudio\jni\Android.mk
+* jni_aaudio\jni\Application.mk
+* jni_aaudio\jni\MySynthAAudio.c
+* jni_aaudio\obj\
+* jni_aaudio\obj\local\
+* jni_aaudio\obj\local\arm64-v8a\
+* jni_aaudio\obj\local\arm64-v8a\libMySynthAAudio.so
+* jni_aaudio\obj\local\arm64-v8a\objs\
+* jni_aaudio\obj\local\arm64-v8a\objs\MySynthAAudio\
+* jni_aaudio\obj\local\arm64-v8a\objs\MySynthAAudio\MySynthAAudio.o
+* jni_aaudio\obj\local\arm64-v8a\objs\MySynthAAudio\MySynthAAudio.o.d
+* jni_aaudio\obj\local\armeabi-v7a\
+* jni_aaudio\obj\local\armeabi-v7a\libMySynthAAudio.so
+* jni_aaudio\obj\local\armeabi-v7a\objs\
+* jni_aaudio\obj\local\armeabi-v7a\objs\MySynthAAudio\
+* jni_aaudio\obj\local\armeabi-v7a\objs\MySynthAAudio\MySynthAAudio.o
+* jni_aaudio\obj\local\armeabi-v7a\objs\MySynthAAudio\MySynthAAudio.o.d
+* jni_aaudio\obj\local\x86\
+* jni_aaudio\obj\local\x86\libMySynthAAudio.so
+* jni_aaudio\obj\local\x86\objs\
+* jni_aaudio\obj\local\x86\objs\MySynthAAudio\
+* jni_aaudio\obj\local\x86\objs\MySynthAAudio\MySynthAAudio.o
+* jni_aaudio\obj\local\x86\objs\MySynthAAudio\MySynthAAudio.o.d
+* jni_aaudio\obj\local\x86_64\
+* jni_aaudio\obj\local\x86_64\libMySynthAAudio.so
+* jni_aaudio\obj\local\x86_64\objs\
+* jni_aaudio\obj\local\x86_64\objs\MySynthAAudio\
+* jni_aaudio\obj\local\x86_64\objs\MySynthAAudio\MySynthAAudio.o
+* jni_aaudio\obj\local\x86_64\objs\MySynthAAudio\MySynthAAudio.o.d
+* jni_opensl\
+* jni_opensl\jni\
+* jni_opensl\jni\Android.mk
+* jni_opensl\jni\Application.mk
+* jni_opensl\jni\MySynthOpenSL.c
+* jni_opensl\obj\
+* jni_opensl\obj\local\
+* jni_opensl\obj\local\arm64-v8a\
+* jni_opensl\obj\local\arm64-v8a\libMySynthOpenSL.so
+* jni_opensl\obj\local\arm64-v8a\objs\
+* jni_opensl\obj\local\arm64-v8a\objs\MySynthOpenSL\
+* jni_opensl\obj\local\arm64-v8a\objs\MySynthOpenSL\MySynthOpenSL.o
+* jni_opensl\obj\local\arm64-v8a\objs\MySynthOpenSL\MySynthOpenSL.o.d
+* jni_opensl\obj\local\armeabi-v7a\
+* jni_opensl\obj\local\armeabi-v7a\libMySynthOpenSL.so
+* jni_opensl\obj\local\armeabi-v7a\objs\
+* jni_opensl\obj\local\armeabi-v7a\objs\MySynthOpenSL\
+* jni_opensl\obj\local\armeabi-v7a\objs\MySynthOpenSL\MySynthOpenSL.o
+* jni_opensl\obj\local\armeabi-v7a\objs\MySynthOpenSL\MySynthOpenSL.o.d
+* jni_opensl\obj\local\x86\
+* jni_opensl\obj\local\x86\libMySynthOpenSL.so
+* jni_opensl\obj\local\x86\objs\
+* jni_opensl\obj\local\x86\objs\MySynthOpenSL\
+* jni_opensl\obj\local\x86\objs\MySynthOpenSL\MySynthOpenSL.o
+* jni_opensl\obj\local\x86\objs\MySynthOpenSL\MySynthOpenSL.o.d
+* jni_opensl\obj\local\x86_64\
+* jni_opensl\obj\local\x86_64\libMySynthOpenSL.so
+* jni_opensl\obj\local\x86_64\objs\
+* jni_opensl\obj\local\x86_64\objs\MySynthOpenSL\
+* jni_opensl\obj\local\x86_64\objs\MySynthOpenSL\MySynthOpenSL.o
+* jni_opensl\obj\local\x86_64\objs\MySynthOpenSL\MySynthOpenSL.o.d
+* lint.xml
+* res\
+* res\xml\
+* res\xml\device_filter.xml
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* libs\arm64-v8a\libMySynthAAudio.so => app\src\main\jniLibs\arm64-v8a\libMySynthAAudio.so
+* libs\arm64-v8a\libMySynthOpenSL.so => app\src\main\jniLibs\arm64-v8a\libMySynthOpenSL.so
+* libs\armeabi-v7a\libMySynthAAudio.so => app\src\main\jniLibs\armeabi-v7a\libMySynthAAudio.so
+* libs\armeabi-v7a\libMySynthOpenSL.so => app\src\main\jniLibs\armeabi-v7a\libMySynthOpenSL.so
+* libs\x86\libMySynthAAudio.so => app\src\main\jniLibs\x86\libMySynthAAudio.so
+* libs\x86\libMySynthOpenSL.so => app\src\main\jniLibs\x86\libMySynthOpenSL.so
+* libs\x86_64\libMySynthAAudio.so => app\src\main\jniLibs\x86_64\libMySynthAAudio.so
+* libs\x86_64\libMySynthOpenSL.so => app\src\main\jniLibs\x86_64\libMySynthOpenSL.so
+* src\ => app\src\main\java\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
