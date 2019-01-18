@@ -7,6 +7,8 @@ See the [MySynth wiki](https://github.com/owingsbj/MySynth/wiki) for more detail
 
 You should also look at MyAndroid for common widgets for building a synthesizer app (such as the keyboard).
 
+Note that this project is still eclipse-based. I haven't had much luck in converting to AndroidStudio, so am continuing to use eclipse (with the AndMore plugin).
+
 ## Acknowledgments
 
 MySynth contains modified versions of the following open source:
