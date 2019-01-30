@@ -217,12 +217,12 @@ public final class MySynthOpenSL extends MySynth {
 	}
 
 	@Override
-	public void destroy() {
+	public void terminate() {
 		if (instrument != null) {
 			instrument.terminate();
 			instrument = null;
 		}
-		super.destroy();
+		super.terminate();
 	}
 
 	@Override
@@ -336,7 +336,7 @@ public final class MySynthOpenSL extends MySynth {
 	}
 
 	@Override
-	public boolean getDamper() {
+	public boolean getSustain() {
 		if (instrument != null) {
 			return instrument.isSustaining();
 		}
@@ -442,7 +442,7 @@ public final class MySynthOpenSL extends MySynth {
 	}
 
 	@Override
-	public void setDamper(boolean damper) {
+	public void setSustain(boolean damper) {
 		if (instrument != null) {
 			instrument.setSustaining(damper);
 		}
@@ -533,8 +533,8 @@ public final class MySynthOpenSL extends MySynth {
 						}
 					}
 
-					if (monitor != null) {
-						monitor.update(left, right);
+					if (callbacks != null) {
+						callbacks.onUpdateScope(left, right);
 					}
 
 				}
@@ -599,20 +599,6 @@ public final class MySynthOpenSL extends MySynth {
 			e.printStackTrace();
 		}
 
-	}
-
-	@Override
-	public void updateCC(int control, double value) {
-		if (instrument != null && !instrument.isEditing()) {
-			instrument.updateCC(control, value);
-		}
-	}
-
-	@Override
-	public void midiclock() {
-		if (instrument != null && !instrument.isEditing()) {
-			instrument.midiclock();
-		}
 	}
 
 }

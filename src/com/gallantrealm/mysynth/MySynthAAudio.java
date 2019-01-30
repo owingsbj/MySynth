@@ -18,7 +18,7 @@ public final class MySynthAAudio extends MySynth {
 
 	public final int RATE_DIVISOR;
 	public final int SAMPLE_RATE;
-	
+
 	boolean isStarted = false;
 	boolean isRunning = false;
 
@@ -50,7 +50,7 @@ public final class MySynthAAudio extends MySynth {
 		SAMPLE_RATE = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC) / RATE_DIVISOR;
 		System.out.println("SAMPLE RATE = " + SAMPLE_RATE);
 		if (nbuffers <= 0) {
-			nbuffers = 5;  // a good default
+			nbuffers = 5; // a good default
 		}
 		System.out.println("Loading MySynthAAudio.so..");
 		try {
@@ -97,12 +97,12 @@ public final class MySynthAAudio extends MySynth {
 	}
 
 	@Override
-	public void destroy() {
+	public void terminate() {
 		if (instrument != null) {
 			instrument.terminate();
 			instrument = null;
 		}
-		super.destroy();
+		super.terminate();
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public final class MySynthAAudio extends MySynth {
 	}
 
 	@Override
-	public boolean getDamper() {
+	public boolean getSustain() {
 		if (instrument != null) {
 			return instrument.isSustaining();
 		}
@@ -298,23 +298,9 @@ public final class MySynthAAudio extends MySynth {
 	}
 
 	@Override
-	public void setDamper(boolean damper) {
+	public void setSustain(boolean damper) {
 		if (instrument != null) {
 			instrument.setSustaining(damper);
-		}
-	}
-
-	@Override
-	public void updateCC(int control, double value) {
-		if (instrument != null && !instrument.isEditing()) {
-			instrument.updateCC(control, value);
-		}
-	}
-
-	@Override
-	public void midiclock() {
-		if (instrument != null && !instrument.isEditing()) {
-			instrument.midiclock();
 		}
 	}
 
@@ -388,10 +374,10 @@ public final class MySynthAAudio extends MySynth {
 						}
 					}
 
-					if (monitor != null) {
-						monitor.update(left, right);
+					if (callbacks != null) {
+						callbacks.onUpdateScope(left, right);
 					}
-					
+
 				}
 			} else { // no instrument or no module sounding.. saving some cpu
 				int bufsize = buffer.length;
