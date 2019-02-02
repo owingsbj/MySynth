@@ -7,12 +7,8 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
-import jp.kshoji.driver.midi.device.MidiInputDevice;
-import jp.kshoji.driver.midi.device.MidiOutputDevice;
-import jp.kshoji.driver.midi.listener.OnMidiInputEventListener;
 import jp.kshoji.driver.usb.util.DeviceFilter;
 
 /**
@@ -70,60 +66,6 @@ public final class UsbMidiDeviceUtils {
 //			}
 		}
 		return Collections.unmodifiableSet(usbInterfaces);
-	}
-
-	/**
-	 * Find {@link Set<MidiIntputDevice>} from {@link UsbDevice}
-	 * 
-	 * @param usbDevice
-	 * @param usbDeviceConnection
-	 * @param deviceFilters
-	 * @param inputEventListener
-	 * @return {@link Set<MidiIntputDevice>} always not null
-	 */
-	public static Set<MidiInputDevice> findMidiInputDevices(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection, List<DeviceFilter> deviceFilters, OnMidiInputEventListener inputEventListener) {
-		Set<MidiInputDevice> devices = new HashSet<MidiInputDevice>();
-
-		int count = usbDevice.getInterfaceCount();
-		for (int i = 0; i < count; i++) {
-			UsbInterface usbInterface = usbDevice.getInterface(i);
-
-			UsbEndpoint endpoint = findMidiEndpoint(usbDevice, usbInterface, UsbConstants.USB_DIR_IN, deviceFilters);
-			if (endpoint != null) {
-				devices.add(new MidiInputDevice(usbDevice, usbDeviceConnection, usbInterface, endpoint, inputEventListener));
-			}
-		}
-
-		return Collections.unmodifiableSet(devices);
-	}
-
-	/**
-	 * Find {@link Set<MidiOutputDevice>} from {@link UsbDevice}
-	 * 
-	 * @param usbDevice
-	 * @param usbDeviceConnection
-	 * @param deviceFilters
-	 * @return {@link Set<MidiOutputDevice>} always not null
-	 */
-	public static Set<MidiOutputDevice> findMidiOutputDevices(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection, List<DeviceFilter> deviceFilters) {
-		if (true)
-			throw new RuntimeException("Deactivated MIDI output.  If activated, make sure it doesn't leak/loop threads");
-		Set<MidiOutputDevice> devices = new HashSet<MidiOutputDevice>();
-
-		int count = usbDevice.getInterfaceCount();
-		for (int i = 0; i < count; i++) {
-			UsbInterface usbInterface = usbDevice.getInterface(i);
-			if (usbInterface == null) {
-				continue;
-			}
-
-			UsbEndpoint endpoint = findMidiEndpoint(usbDevice, usbInterface, UsbConstants.USB_DIR_OUT, deviceFilters);
-			if (endpoint != null) {
-				devices.add(new MidiOutputDevice(usbDevice, usbDeviceConnection, usbInterface, endpoint));
-			}
-		}
-
-		return Collections.unmodifiableSet(devices);
 	}
 
 	/**

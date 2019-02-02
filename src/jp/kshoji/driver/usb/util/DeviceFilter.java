@@ -10,8 +10,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
-import android.util.Log;
-import jp.kshoji.driver.midi.util.Constants;
 
 /**
  * Utility methods from com.android.server.usb.UsbSettingsManager.DeviceFilter
@@ -68,9 +66,9 @@ public final class DeviceFilter {
 				}
 			}
 		} catch (XmlPullParserException e) {
-			Log.d(Constants.TAG, "XmlPullParserException", e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			Log.d(Constants.TAG, "IOException", e);
+			e.printStackTrace();
 		}
 
 		return Collections.unmodifiableList(deviceFilters);
