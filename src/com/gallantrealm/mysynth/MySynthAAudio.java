@@ -157,56 +157,6 @@ public final class MySynthAAudio extends MySynth {
 	}
 
 	@Override
-	public void notePress(int note, float velocity) {
-		if (instrument != null) {
-			instrument.notePress(note, velocity);
-		}
-	}
-
-	@Override
-	public void noteRelease(int note) {
-		if (instrument != null) {
-			instrument.noteRelease(note);
-		}
-	}
-
-	@Override
-	public void pitchBend(float bend) {
-		if (instrument != null) {
-			instrument.pitchBend(bend);
-		}
-	}
-
-	@Override
-	public void expression(float amount) {
-		if (instrument != null) {
-			instrument.expression(amount);
-		}
-	}
-
-	@Override
-	public void pressure(int voice, float amount) {
-		if (instrument != null) {
-			instrument.pressure(voice, amount);
-		}
-	}
-
-	@Override
-	public void pressure(float amount) {
-		if (instrument != null) {
-			instrument.pressure(amount);
-		}
-	}
-
-	@Override
-	public boolean getSustain() {
-		if (instrument != null) {
-			return instrument.isSustaining();
-		}
-		return false;
-	}
-
-	@Override
 	public void allSoundOff() {
 	}
 
@@ -297,13 +247,6 @@ public final class MySynthAAudio extends MySynth {
 	@Override
 	public int getRecordTime() {
 		return recordingIndex / SAMPLE_RATE / 2;
-	}
-
-	@Override
-	public void setSustain(boolean damper) {
-		if (instrument != null) {
-			instrument.setSustaining(damper);
-		}
 	}
 
 	public native int nativeStart(int sampleRate, short[] buffer, int desiredBufferSize, int maxBufferSize);

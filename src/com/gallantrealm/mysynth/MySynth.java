@@ -97,52 +97,6 @@ public abstract class MySynth {
 	public abstract void resume();
 
 	/**
-	 * Starts playing the note at the given velocity.
-	 * @param note the note number as in midi
-	 * @param velocity a velocity from 0 to 1
-	 */
-	public abstract void notePress(int note, float velocity);
-
-	/**
-	 * Stops playing the note.
-	 * @param note the note number as in midi
-	 */
-	public abstract void noteRelease(int note);
-
-	/**
-	 * Bends the pitch of all playing notes up or down
-	 * @param bend a value from -1 to 1, where 0 is no pitch bend.
-	 */
-	public abstract void pitchBend(float bend);
-
-	/**
-	 * Expression, as defined by the instrument.  Typically this is vibrato.
-	 * @param amount the amount of expression, from 0 to 1
-	 */
-	public abstract void expression(float amount);
-
-	/**
-	 * This comes either from the on-screen keyboard (by moving finger up/down on key, or from a breath controller (the pressure of blowing).
-	 */
-	public abstract void pressure(int voice, float amount);
-
-	/**
-	 * Monophonic pressure, such as from a breath controller.
-	 * @param amount the amount of pressure from 0 to 1.  This should be scaled exactly the same as velocity.
-	 */
-	public abstract void pressure(float amount);
-
-	/**
-	 * Sustain notes as if the sustain pedal were pressed
-	 */
-	public abstract void setSustain(boolean sustain);
-
-	/**
-	 * Returns the current sustain setting.
-	 */
-	public abstract boolean getSustain();
-
-	/**
 	 * Quiets all sound generation if possible.
 	 */
 	public abstract void allSoundOff();

@@ -4,7 +4,8 @@ import java.io.ByteArrayOutputStream;
 import android.content.Context;
 
 /**
- * MIDI support for MySynth. This is an abstract class. There are two concrete subclasses: one to use the Android MIDI classes (available in Android 6.0+) and the other using USB device API directly.
+ * MIDI support for MySynth. This is an abstract class. There are two concrete subclasses: one to use the Android MIDI
+ * classes (available in Android 6.0+) and the other using USB device API directly.
  */
 public abstract class MySynthMidi {
 
@@ -22,9 +23,13 @@ public abstract class MySynthMidi {
 
 	/**
 	 * Creates an instance of MySynthMidi based on the availabilty of MIDI support.
-	 * @param context the application context
-	 * @param synth the synthesizer to be controlled by MIDI
-	 * @param callbacks a callbacks class
+	 * 
+	 * @param context
+	 *            the application context
+	 * @param synth
+	 *            the synthesizer to be controlled by MIDI
+	 * @param callbacks
+	 *            a callbacks class
 	 */
 	public static MySynthMidi create(Context context, MySynth synth, Callbacks callbacks) {
 		if (context.getPackageManager().hasSystemFeature("android.software.midi")) {
@@ -42,9 +47,13 @@ public abstract class MySynthMidi {
 
 	/**
 	 * Constructor.
-	 * @param context the application context
-	 * @param synth the synthesizer to be controlled by MIDI
-	 * @param callbacks a callbacks class
+	 * 
+	 * @param context
+	 *            the application context
+	 * @param synth
+	 *            the synthesizer to be controlled by MIDI
+	 * @param callbacks
+	 *            a callbacks class
 	 */
 	public MySynthMidi(Context context, MySynth synth, Callbacks callbacks) {
 		this.context = context;
@@ -53,7 +62,7 @@ public abstract class MySynthMidi {
 	}
 
 	/**
-	 * Terminates the MIDI support.  This should be called when the app is stopping or closing.
+	 * Terminates the MIDI support. This should be called when the app is stopping or closing.
 	 */
 	public abstract void terminate();
 
@@ -66,6 +75,7 @@ public abstract class MySynthMidi {
 
 	/**
 	 * Sets the MIDI channel to listen to, or zero for any channel.
+	 * 
 	 * @param midiChannel
 	 */
 	public void setMidiChannel(int midiChannel) {
@@ -83,8 +93,8 @@ public abstract class MySynthMidi {
 	ByteArrayOutputStream systemExclusive = null;
 
 	/**
-	 * Process a midi message. The message will be one, two or three bytes long. Subclasses call this method.
-	 * They determine the message length when parsing midi and pad extra bytes (with zeros)
+	 * Process a midi message. The message will be one, two or three bytes long. Subclasses call this method. They
+	 * determine the message length when parsing midi and pad extra bytes (with zeros)
 	 */
 	void processMidi(byte byte1, byte byte2, byte byte3) {
 		int codeIndexNumber = ((int) byte1 >> 4) & 0x0f;
@@ -111,7 +121,10 @@ public abstract class MySynthMidi {
 				return;
 			}
 			int midiNote = byte2 & 0x7f;
-			synth.noteRelease(midiNote);
+			AbstractInstrument instrument = synth.getInstrument();
+			if (instrument != null) {
+				instrument.noteRelease(midiNote);
+			}
 			break;
 		}
 		case 9: // note on
@@ -121,11 +134,14 @@ public abstract class MySynthMidi {
 			}
 			int midiNote = byte2 & 0x7F;
 			int midiVelocity = byte3 & 0x7F;
-			if (midiVelocity == 0) {
-				synth.noteRelease(midiNote);
-			} else {
-				float velocity = Math.min(1.0f, midiVelocity / 127.0f);
-				synth.notePress(midiNote, velocity);
+			AbstractInstrument instrument = synth.getInstrument();
+			if (instrument != null) {
+				if (midiVelocity == 0) {
+					instrument.noteRelease(midiNote);
+				} else {
+					float velocity = Math.min(1.0f, midiVelocity / 127.0f);
+					instrument.notePress(midiNote, velocity);
+				}
 			}
 			break;
 		}
@@ -148,11 +164,14 @@ public abstract class MySynthMidi {
 			int c = byte2 & 0x7f;
 			int v = byte3 & 0x7f;
 			if (c < 120) {
-				if (c == 64) {
-					synth.setSustain(v >= 64);
-				}
-				if (c == 11) {
-					synth.expression(v / 127.0f);
+				AbstractInstrument instrument = synth.getInstrument();
+				if (instrument != null) {
+					if (c == 64) {
+						instrument.setSustaining(v >= 64);
+					}
+					if (c == 11) {
+						instrument.expression(v / 127.0f);
+					}
 				}
 				if (callbacks != null) {
 					callbacks.onControlChange(c, v);
@@ -197,7 +216,10 @@ public abstract class MySynthMidi {
 				return;
 			}
 			float pressure = Math.min(1.0f, byte2 / 127.0f);
-			synth.pressure(pressure);
+			AbstractInstrument instrument = synth.getInstrument();
+			if (instrument != null) {
+				instrument.pressure(pressure);
+			}
 			break;
 		}
 		case 14: // pitch bend
@@ -208,7 +230,11 @@ public abstract class MySynthMidi {
 			int l = byte2 & 0x7f;
 			int m = byte3 & 0x7f;
 			int midiAmount = l | (m << 7);
-			synth.pitchBend((midiAmount - 8192) / 8192.0f);
+			float amount = (midiAmount - 8192) / 8192.0f;
+			AbstractInstrument instrument = synth.getInstrument();
+			if (instrument != null) {
+				instrument.pitchBend(amount);
+			}
 			break;
 		}
 		case 15: // system common and system realtime messages
