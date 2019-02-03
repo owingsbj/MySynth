@@ -179,7 +179,9 @@ public final class MySynthAAudio extends MySynth {
 
 	@Override
 	public void expression(float amount) {
-		// TODO
+		if (instrument != null) {
+			instrument.expression(amount);
+		}
 	}
 
 	@Override

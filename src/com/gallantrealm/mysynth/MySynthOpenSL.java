@@ -318,7 +318,9 @@ public final class MySynthOpenSL extends MySynth {
 
 	@Override
 	public void expression(float amount) {
-		// TODO
+		if (instrument != null) {
+			instrument.expression( amount);
+		}
 	}
 
 	@Override
@@ -587,7 +589,6 @@ public final class MySynthOpenSL extends MySynth {
 				try {
 					Thread.currentThread().sleep(10);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 //			int bufsize = buffer1.length;

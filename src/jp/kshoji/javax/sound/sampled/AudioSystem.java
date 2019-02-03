@@ -40,10 +40,6 @@ import jp.kshoji.javax.sound.sampled.spi.AudioFileWriter;
 import jp.kshoji.javax.sound.sampled.spi.FormatConversionProvider;
 import jp.kshoji.javax.sound.sampled.spi.MixerProvider;
 
-/* $fb TODO:
- * - consistent usage of (typed) collections
- */
-
 /**
  * The <code>AudioSystem</code> class acts as the entry point to the sampled-audio system resources. This class lets you query and access the mixers that are installed on the system. <code>AudioSystem</code> includes a number of methods for
  * converting audio data between different formats, and for translating between audio files and streams. It also provides a method for obtaining a <code>{@link Line}</code> directly from the <code>AudioSystem</code> without dealing
