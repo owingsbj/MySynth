@@ -1,6 +1,7 @@
 package com.gallantrealm.mysynth;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import android.content.Context;
 
 /**
@@ -44,6 +45,8 @@ public abstract class MySynthMidi {
 	boolean midiDeviceAttached;
 	int midiChannel;
 	Callbacks callbacks;
+	boolean logMidi;
+	PrintStream midiLogStream;
 
 	/**
 	 * Constructor.
@@ -64,7 +67,11 @@ public abstract class MySynthMidi {
 	/**
 	 * Terminates the MIDI support. This should be called when the app is stopping or closing.
 	 */
-	public abstract void terminate();
+	public void terminate() {
+		if (midiLogStream != null) {
+			midiLogStream.close();
+		}
+	}
 
 	/**
 	 * Returns the MIDI channel being listened to.
@@ -75,11 +82,24 @@ public abstract class MySynthMidi {
 
 	/**
 	 * Sets the MIDI channel to listen to, or zero for any channel.
-	 * 
-	 * @param midiChannel
 	 */
 	public void setMidiChannel(int midiChannel) {
 		this.midiChannel = midiChannel;
+	}
+	
+	/**
+	 * Returns true if midi messages are being logged to midilog.txt.
+	 */
+	public boolean isLogMidi() {
+		return logMidi;
+	}
+
+	/**
+	 * If set to true, midi messages are logged in a file called midilog.txt.  This can
+	 * be useful for debugging issues with support of  midi controllers.
+	 */
+	public void setLogMidi(boolean logMidi) {
+		this.logMidi = logMidi;
 	}
 
 	/**
@@ -163,7 +183,9 @@ public abstract class MySynthMidi {
 			}
 			int c = byte2 & 0x7f;
 			int v = byte3 & 0x7f;
-			if (c < 120) {
+			if (c == 0 || c == 32) {
+				// bank select, ignored
+			} else if  (c < 120) {
 				AbstractInstrument instrument = synth.getInstrument();
 				if (instrument != null) {
 					if (c == 64) {
@@ -204,9 +226,9 @@ public abstract class MySynthMidi {
 				return;
 			}
 			int program = byte2 + 1;
-			System.out.println("MySynthMidi: Program Change: " + (program + 1));
+			System.out.println("MySynthMidi: Program Change: " + (program));
 			if (callbacks != null) {
-				callbacks.onProgramChange(program + 1);
+				callbacks.onProgramChange(program);
 			}
 			break;
 		}
@@ -287,15 +309,15 @@ public abstract class MySynthMidi {
 		int codeIndexNumber = ((int) byte1 >> 4) & 0x0f;
 		int codeSubNumber = ((int) byte1) & 0x0f;
 		switch (codeIndexNumber) {
-		case 8:
-		case 9:
-		case 10:
-		case 11:
+		case 8: // note off
+		case 9: // note on
+		case 10: // polyphonic key pressure
+		case 11: // control change
 			return 3;
-		case 12:
-		case 13:
+		case 12: // program change
+		case 13: // channel pressure
 			return 2;
-		case 14:
+		case 14: // pitch bend
 			return 3;
 		case 15: // 15
 			switch (codeSubNumber) {

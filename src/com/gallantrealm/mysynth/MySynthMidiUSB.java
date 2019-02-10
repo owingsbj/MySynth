@@ -1,5 +1,8 @@
 package com.gallantrealm.mysynth;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,7 +26,8 @@ import jp.kshoji.driver.midi.util.UsbMidiDeviceUtils;
 import jp.kshoji.driver.usb.util.DeviceFilter;
 
 /**
- * This subclass of MySynthMidi uses general Android USB support for connecting to MIDI controllers and receiving MIDI messages.
+ * This subclass of MySynthMidi uses general Android USB support for connecting to MIDI controllers and receiving MIDI
+ * messages.
  */
 public class MySynthMidiUSB extends MySynthMidi {
 
@@ -39,7 +43,8 @@ public class MySynthMidiUSB extends MySynthMidi {
 		deviceGrantQueue = new LinkedList<UsbDevice>();
 		isGranting = false;
 		grantedDeviceMap = new HashMap<String, UsbDevice>();
-		deviceConnectThread = new UsbDeviceConnectionThread(context.getApplicationContext(), (UsbManager) context.getApplicationContext().getSystemService(Context.USB_SERVICE));
+		deviceConnectThread = new UsbDeviceConnectionThread(context.getApplicationContext(),
+				(UsbManager) context.getApplicationContext().getSystemService(Context.USB_SERVICE));
 		deviceConnectThread.start();
 	}
 
@@ -73,6 +78,7 @@ public class MySynthMidiUSB extends MySynthMidi {
 		}
 
 		usbDeviceConnection = null;
+		super.terminate();
 	}
 
 	public void checkConnectedDevicesImmediately() {
@@ -112,7 +118,8 @@ public class MySynthMidiUSB extends MySynthMidi {
 	}
 
 	/**
-	 * This thread is used to wait for USB device connections, then determine if they are MIDI and if so to start dispatching of MIDI messages.
+	 * This thread is used to wait for USB device connections, then determine if they are MIDI and if so to start
+	 * dispatching of MIDI messages.
 	 */
 	private final class UsbDeviceConnectionThread extends Thread {
 		private Context context;
@@ -146,8 +153,13 @@ public class MySynthMidiUSB extends MySynthMidi {
 								isGranting = true;
 								UsbDevice device = deviceGrantQueue.remove();
 
-								PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(UsbDevicePermissionGrantedReceiver.USB_PERMISSION_GRANTED_ACTION), 0);
-								context.registerReceiver(new UsbDevicePermissionGrantedReceiver(device.getDeviceName(), device), new IntentFilter(UsbDevicePermissionGrantedReceiver.USB_PERMISSION_GRANTED_ACTION));
+								PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0,
+										new Intent(UsbDevicePermissionGrantedReceiver.USB_PERMISSION_GRANTED_ACTION),
+										0);
+								context.registerReceiver(
+										new UsbDevicePermissionGrantedReceiver(device.getDeviceName(), device),
+										new IntentFilter(
+												UsbDevicePermissionGrantedReceiver.USB_PERMISSION_GRANTED_ACTION));
 								usbManager.requestPermission(device, permissionIntent);
 							}
 						}
@@ -181,7 +193,8 @@ public class MySynthMidiUSB extends MySynthMidi {
 					System.out.println("A new USB Device!!");
 					connectedDeviceNameSet.add(deviceName);
 					UsbDevice device = deviceMap.get(deviceName);
-					System.out.println("Device class: " + device.getDeviceClass() + " subclass: " + device.getDeviceSubclass());
+					System.out.println(
+							"Device class: " + device.getDeviceClass() + " subclass: " + device.getDeviceSubclass());
 
 					Set<UsbInterface> midiInterfaces = UsbMidiDeviceUtils.findAllMidiInterfaces(device, deviceFilters);
 					if (midiInterfaces.size() > 0) {
@@ -257,7 +270,8 @@ public class MySynthMidiUSB extends MySynthMidi {
 				int endpointCount = usbInterface.getEndpointCount();
 				for (int endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
 					UsbEndpoint endpoint = usbInterface.getEndpoint(endpointIndex);
-					System.out.println("      Endpoint " + endpoint.getEndpointNumber() + " direction: " + endpoint.getDirection());
+					System.out.println("      Endpoint " + endpoint.getEndpointNumber() + " direction: "
+							+ endpoint.getDirection());
 					if (endpoint.getDirection() == UsbConstants.USB_DIR_IN) {
 						inputEndpoint = endpoint;
 						break;
@@ -333,6 +347,18 @@ public class MySynthMidiUSB extends MySynthMidi {
 		boolean stopFlag;
 
 		public void run() {
+			if (logMidi) {
+				File file = new File(context.getExternalFilesDir(null), "midilog.txt");
+				if (file.exists()) {
+					file.delete();
+				}
+				try {
+					midiLogStream = new PrintStream(file);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+
 			int BUFFER_LENGTH = inputEndpoint.getMaxPacketSize();
 			System.out.println("MySynthMidiUSB: UsbMidiDeviceThread is running, using buffer length " + BUFFER_LENGTH);
 
@@ -347,7 +373,14 @@ public class MySynthMidiUSB extends MySynthMidi {
 					}
 				} else {
 					for (int i = 0; i < length; i += 4) {
+						if (midiLogStream != null) {
+							midiLogStream.format("%02x%02x%02x", (int) data[i + 1] & 0xff, (int) data[i + 2] & 0xff,
+									(int) data[i + 3] & 0xff);
+						}
 						processMidi(data[i + 1], data[i + 2], data[i + 3]);
+						if (midiLogStream != null) {
+							midiLogStream.println();
+						}
 					}
 				}
 			}
