@@ -118,7 +118,7 @@ public abstract class AbstractInstrument implements Serializable {
 	 * @param value
 	 *            the value from 0.0 to 1.0 (these map to 0 to 127)
 	 */
-	public abstract void updateCC(int control, double value);
+	public abstract void controlChange(int control, double value);
 
 	/**
 	 * Called to handle a MIDI clock pulse. These pulses occur 64 times a beat, or 256 times in a 4/4 measure. Any LFO's
