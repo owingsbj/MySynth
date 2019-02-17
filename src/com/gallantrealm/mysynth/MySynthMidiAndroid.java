@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
@@ -17,8 +18,9 @@ import android.os.Looper;
 
 /**
  * This subclass of MySynthMidi uses Android MIDI support for connecting to MIDI controllers and receiving MIDI
- * messages.
+ * messages.  Note that API level 23 is required for Android MIDI support.
  */
+@SuppressLint("NewApi")
 public class MySynthMidiAndroid extends MySynthMidi {
 
 	MidiDevice outputDevice;
@@ -79,6 +81,7 @@ public class MySynthMidiAndroid extends MySynthMidi {
 			if (portInfo.getType() == PortInfo.TYPE_OUTPUT) {
 				// Note: output port means output of the MIDI device. It is thus input to MySynth.
 				outputPortToUse = portInfo;
+				break;
 			}
 		}
 
