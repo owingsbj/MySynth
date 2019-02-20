@@ -265,7 +265,7 @@ public class MySynthMidiUSB extends MySynthMidi {
 		int interfaceCount = usbDevice.getInterfaceCount();
 		for (int i = 0; i < interfaceCount; i++) {
 			usbInterface = usbDevice.getInterface(i);
-			if (usbInterface.getInterfaceClass() == 1 && usbInterface.getInterfaceSubclass() == 3) {
+			if ((usbInterface.getInterfaceClass() == 1 && usbInterface.getInterfaceSubclass() == 3) || (usbInterface.getInterfaceClass() == 255 && usbInterface.getInterfaceSubclass() == 3)) {
 				System.out.println("  This is a standard MIDI device");
 				int endpointCount = usbInterface.getEndpointCount();
 				for (int endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
