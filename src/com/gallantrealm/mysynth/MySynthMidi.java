@@ -32,8 +32,8 @@ public abstract class MySynthMidi {
 	 * @param callbacks
 	 *            a callbacks class
 	 */
-	public static MySynthMidi create(Context context, MySynth synth, Callbacks callbacks) {
-		if (context.getPackageManager().hasSystemFeature("android.software.midi")) {
+	public static MySynthMidi create(Context context, MySynth synth, boolean preferAndroidMidi, Callbacks callbacks) {
+		if (preferAndroidMidi && context.getPackageManager().hasSystemFeature("android.software.midi")) {
 			return new MySynthMidiAndroid(context, synth, callbacks);
 		} else {
 			return new MySynthMidiUSB(context, synth, callbacks);
@@ -291,7 +291,7 @@ public abstract class MySynthMidi {
 				System.out.println("MySynthMidi: onMidiStopSequence -- unsupported");
 			} else if (code == 0xfd) { // undefined
 			} else if (code == 0xfe) { // active sensing
-				System.out.println("MySynthMidi: onMidiActiveSensing -- unsupported");
+				//System.out.println("MySynthMidi: onMidiActiveSensing -- unsupported");
 			} else if (code == 0xff) { // reset
 				System.out.println("MySynthMidi: onMidiReset -- unsupported");
 			}
