@@ -17,8 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 /**
- * This subclass of MySynthMidi uses Android MIDI support for connecting to MIDI controllers and receiving MIDI
- * messages.  Note that API level 23 is required for Android MIDI support.
+ * This subclass of MySynthMidi uses Android MIDI support for connecting to MIDI controllers and receiving MIDI messages. Note that API level 23 is required for Android MIDI support.
  */
 @SuppressLint("NewApi")
 public class MySynthMidiAndroid extends MySynthMidi {
@@ -45,6 +44,7 @@ public class MySynthMidiAndroid extends MySynthMidi {
 			public void onDeviceAdded(MidiDeviceInfo device) {
 				onMidiDeviceAdded(device);
 			}
+
 			public void onDeviceRemoved(MidiDeviceInfo device) {
 				onMidiDeviceRemoved(device);
 			}
@@ -60,7 +60,6 @@ public class MySynthMidiAndroid extends MySynthMidi {
 			midiManager.unregisterDeviceCallback(midiDeviceCallback);
 			midiDeviceCallback = null;
 		}
-
 		if (outputPort != null && midiReceiver != null) {
 			System.out.println("MySynthMidiAndroid: Removing MIDI receiver from input device port");
 			outputPort.disconnect(midiReceiver);
@@ -70,107 +69,87 @@ public class MySynthMidiAndroid extends MySynthMidi {
 		super.terminate();
 	}
 
-	private void onMidiDeviceAdded(MidiDeviceInfo device) {
-		final MidiManager midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
-		System.out.println("MySynthMidiAndroid: MIDI device added: "
-				+ device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
-		PortInfo outputPortToUse = null;
-		for (PortInfo portInfo : device.getPorts()) {
-			System.out.println("MySynthMidiAndroid:   Device port " + portInfo.getPortNumber() + " type "
-					+ portInfo.getType() + " " + portInfo.getName());
-			if (portInfo.getType() == PortInfo.TYPE_OUTPUT) {
-				// Note: output port means output of the MIDI device. It is thus input to MySynth.
-				outputPortToUse = portInfo;
-				break;
-			}
-		}
-
-		if (outputPortToUse != null) {
-			System.out.println("MySynthMidiAndroid: Found some interesting ports, opening device..");
-
-			final int outputPortNum = (outputPortToUse != null) ? outputPortToUse.getPortNumber() : -1;
-
-			midiManager.openDevice(device, new MidiManager.OnDeviceOpenedListener() {
+	private void onMidiDeviceAdded(final MidiDeviceInfo deviceInfo) {
+		System.out.println("MySynthMidiAndroid: MIDI device added: " + deviceInfo.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+		if (deviceInfo.getOutputPortCount() > 0) {
+			final MidiManager midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
+			midiManager.openDevice(deviceInfo, new MidiManager.OnDeviceOpenedListener() {
 				public void onDeviceOpened(MidiDevice device) {
-					try {
-						if (device == null) {
-							System.out.println("MySynthMidiAndroid: Could not open device " + device);
-						} else {
-							System.out.println("MySynthMidiAndroid: Device opened.");
-							outputDevice = device;
-							if (outputPortNum >= 0) {
-								outputPort = device.openOutputPort(outputPortNum);
-								if (outputPort == null) {
-									System.out.println(
-											"MySynthMidiAndroid: Output port could not be opened on the device");
-								} else {
-									if (logMidi) {
-										File file = new File(context.getExternalFilesDir(null), "midilog.txt");
-										if (file.exists()) {
-											file.delete();
-										}
-										try {
-											midiLogStream = new PrintStream(file);
-										} catch (FileNotFoundException e) {
-											e.printStackTrace();
-										}
-									}
-									midiReceiver = new MidiReceiver() {
-										byte[] messageBytes = new byte[3];
-										int messageByteIndex = 0;
-										int messageLength = 0;
-										public void onSend(byte[] data, int offset, int count, long timestamp)
-												throws IOException {
-											for (int i = 0; i < count; i++) {
-												byte b = data[offset + i];
-												messageBytes[messageByteIndex] = b;
-												if (messageByteIndex == 0) {
-													messageLength = getMidiMessageLength(b);
-												}
-												messageByteIndex += 1;
-												if (messageByteIndex >= messageLength) {
-													if (midiLogStream != null) {
-														if ((messageBytes[0] & 0xff) != 0xf8
-																&& (messageBytes[0] & 0xff) != 0xfe) { // don't log
-																										// timing clocks
-																										// and active
-																										// sensing
-															midiLogStream.format("%02x%02x%02x\n", messageBytes[0],
-																	messageBytes[1], messageBytes[2]);
-														}
-													}
-													processMidi(messageBytes[0], messageBytes[1], messageBytes[2]);
-													messageByteIndex = 0;
-													messageBytes[0] = 0;
-													messageBytes[1] = 0;
-													messageBytes[2] = 0;
-												}
-											}
-										}
-									};
-									outputPort.connect(midiReceiver);
-									System.out.println("MySynthMidiAndroid: Midi receiver connected!");
-									midiDeviceAttached = true;
-									if (callbacks != null) {
-										callbacks.onDeviceAttached(device.getInfo().getProperties()
-												.getString(MidiDeviceInfo.PROPERTY_NAME));
-									}
-								}
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+					if (device == null) {
+						System.out.println("MySynthMidiAndroid: Could not open device " + device);
+						return;
+					}
+					for (int i = 0; i < deviceInfo.getOutputPortCount(); i++) {
+						openOutputPort(device, i);
 					}
 				}
 			}, new Handler(Looper.getMainLooper()));
 		}
 	}
 
+	private void openOutputPort(MidiDevice device, int outputPortIndex) {
+		System.out.println("MySynthMidiAndroid: Opening output port " + outputPortIndex);
+		try {
+			System.out.println("MySynthMidiAndroid: Device opened.");
+			outputDevice = device;
+			outputPort = device.openOutputPort(outputPortIndex);
+			if (outputPort == null) {
+				System.out.println("MySynthMidiAndroid: Output port could not be opened on the device");
+			} else {
+				if (logMidi) {
+					File file = new File(context.getExternalFilesDir(null), "midilog.txt");
+					if (file.exists()) {
+						file.delete();
+					}
+					try {
+						midiLogStream = new PrintStream(file);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+				midiReceiver = new MidiReceiver() {
+					byte[] messageBytes = new byte[3];
+					int messageByteIndex = 0;
+					int messageLength = 0;
+
+					public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException {
+						for (int i = 0; i < count; i++) {
+							byte b = data[offset + i];
+							messageBytes[messageByteIndex] = b;
+							if (messageByteIndex == 0) {
+								messageLength = getMidiMessageLength(b);
+							}
+							messageByteIndex += 1;
+							if (messageByteIndex >= messageLength) {
+								if (midiLogStream != null) {
+									if ((messageBytes[0] & 0xff) != 0xf8 && (messageBytes[0] & 0xff) != 0xfe) { // don't log timing clocks and active sensing
+										midiLogStream.format("%02x%02x%02x\n", messageBytes[0], messageBytes[1], messageBytes[2]);
+									}
+								}
+								processMidi(messageBytes[0], messageBytes[1], messageBytes[2]);
+								messageByteIndex = 0;
+								messageBytes[0] = 0;
+								messageBytes[1] = 0;
+								messageBytes[2] = 0;
+							}
+						}
+					}
+				};
+				outputPort.connect(midiReceiver);
+				System.out.println("MySynthMidiAndroid: Midi receiver connected!");
+				midiDeviceAttached = true;
+				if (callbacks != null) {
+					callbacks.onDeviceAttached(device.getInfo().getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void onMidiDeviceRemoved(MidiDeviceInfo device) {
-		System.out.println("MySynthMidiAndroid: MIDI device removed: "
-				+ device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
-		if (outputDevice != null && device.getId() == outputDevice.getInfo().getId() && outputPort != null
-				&& midiReceiver != null) {
+		System.out.println("MySynthMidiAndroid: MIDI device removed: " + device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+		if (outputDevice != null && device.getId() == outputDevice.getInfo().getId() && outputPort != null && midiReceiver != null) {
 			outputPort.disconnect(midiReceiver);
 			outputPort = null;
 			midiReceiver = null;
