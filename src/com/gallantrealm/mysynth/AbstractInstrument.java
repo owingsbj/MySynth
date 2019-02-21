@@ -82,6 +82,13 @@ public abstract class AbstractInstrument implements Serializable {
 	 *            the note number, as defined in MIDI.
 	 */
 	public abstract void noteRelease(int note);
+	
+	/**
+	 * Changes the pressure of a note after it has been pressed.
+	 * @param note
+	 * @param pressure
+	 */
+	public abstract void noteAftertouch(int note, float pressure);
 
 	/**
 	 * Modifies the pitch of all playing notes.

@@ -174,6 +174,10 @@ public abstract class MySynthMidi {
 			int midiPressure = byte3 & 0x7F;
 			float pressure = Math.min(1.0f, midiPressure / 127.0f);
 			System.out.println("MySynthMidi: Polyphonic key pressure (aftertouch) -- unsupported.");
+			AbstractInstrument instrument = synth.getInstrument();
+			if (instrument != null) {
+				instrument.noteAftertouch(midiNote, pressure);
+			}
 			break;
 		}
 		case 11: // control change
