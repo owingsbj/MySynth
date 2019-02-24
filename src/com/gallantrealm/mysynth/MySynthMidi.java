@@ -68,6 +68,7 @@ public abstract class MySynthMidi {
 	 * Terminates the MIDI support. This should be called when the app is stopping or closing.
 	 */
 	public void terminate() {
+		callbacks = null;
 		if (midiLogStream != null) {
 			midiLogStream.close();
 		}
