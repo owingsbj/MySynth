@@ -20,7 +20,7 @@ public final class MySynthOpenSL extends MySynth {
 	static final int K32 = 32768;
 	static final int K16 = 16384;
 	static final int K8 = 8192;
-	
+
 	public final boolean hasLowLatencySupport;
 
 	public final int RATE_DIVISOR;
@@ -129,7 +129,13 @@ public final class MySynthOpenSL extends MySynth {
 		if (Build.VERSION.SDK_INT >= 17) {
 			AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 			String nativeSampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-			int framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+			int framesPerBuffer;
+			try {
+				framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+			} catch (NumberFormatException e) {
+				// this happens on Google Pixel
+				framesPerBuffer = 256;
+			}
 			// Note: above does not include stereo, so just * 2 for buffsize
 			System.out.println("AudioManager says.. NativeSampleRate: " + nativeSampleRate + "  FramesPerBuffer: " + framesPerBuffer);
 			while (framesPerBuffer < 256) {

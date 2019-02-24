@@ -23,7 +23,7 @@ public final class MySynthAAudio extends MySynth {
 	boolean isRunning = false;
 
 	short[] buffer;
-	final int framesPerBuffer;
+	int framesPerBuffer;
 	int desiredBuffsize;
 
 	AbstractInstrument instrument;
@@ -64,7 +64,12 @@ public final class MySynthAAudio extends MySynth {
 		// Determine optimal buffsize
 		AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		String nativeSampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-		framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+		try {
+			framesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
+		} catch (NumberFormatException e) {
+			// this happens on Google Pixel
+			framesPerBuffer = 2;
+		}
 		// for AAudio, the framesPerBuffer is a minimum, okay to exceed it
 
 		// Note: a frame is 4 bytes long (2 bytes for each channel)
