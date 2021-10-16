@@ -17,6 +17,8 @@ android {
                 cppFlags ''
             }
         }
+        targetSdkVersion 30
+        minSdkVersion 28
     }
 
     buildTypes {
@@ -29,24 +31,22 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-//    externalNativeBuild{
-//        ndkBuild{
-//            path "src/main/cpp/Android.mk"
-//        }
-//    }
-//    externalNativeBuild {
-//        cmake {
-//            path file('src/main/cpp/CMakeLists.txt')
-//            version '3.10.2'
-//        }
-//    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/jni/CMakeLists.txt')
+            version '3.10.2'
+        }
+    }
+    ndkVersion '23.0.7599858'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
     testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
