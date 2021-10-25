@@ -71,6 +71,8 @@ public abstract class MySynthMidi {
 		if (midiLogStream != null) {
 			midiLogStream.close();
 		}
+		callbacks = null;
+		synth = null;
 	}
 
 	/**
@@ -117,6 +119,9 @@ public abstract class MySynthMidi {
 	 * determine the message length when parsing midi and pad extra bytes (with zeros)
 	 */
 	void processMidi(byte byte1, byte byte2, byte byte3) {
+		if (synth == null) {
+			return;
+		}
 		int codeIndexNumber = ((int) byte1 >> 4) & 0x0f;
 		int channel = ((int) byte1 & 0x0f) + 1;
 		switch (codeIndexNumber) {
