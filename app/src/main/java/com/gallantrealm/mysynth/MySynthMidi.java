@@ -33,11 +33,15 @@ public abstract class MySynthMidi {
 	 *            a callbacks class
 	 */
 	public static MySynthMidi create(Context context, MySynth synth, Callbacks callbacks) {
+		System.out.println(">>MySynthMidi.create");
+		MySynthMidi midi;
 		if (context.getPackageManager().hasSystemFeature("android.software.midi")) {
-			return new MySynthMidiAndroid(context, synth, callbacks);
+			midi = new MySynthMidiAndroid(context, synth, callbacks);
 		} else {
-			return new MySynthMidiUSB(context, synth, callbacks);
+			midi = new MySynthMidiUSB(context, synth, callbacks);
 		}
+		System.out.println("<<MySynthMidi.create");
+		return midi;
 	}
 
 	Context context;
@@ -47,6 +51,7 @@ public abstract class MySynthMidi {
 	Callbacks callbacks;
 	boolean logMidi;
 	PrintStream midiLogStream;
+	boolean running;
 
 	/**
 	 * Constructor.
@@ -68,11 +73,30 @@ public abstract class MySynthMidi {
 	 * Terminates the MIDI support. This should be called when the app is stopping or closing.
 	 */
 	public void terminate() {
+		System.out.println(">>MySynthMidi.terminate");
+		running = false;
 		if (midiLogStream != null) {
 			midiLogStream.close();
 		}
 		callbacks = null;
 		synth = null;
+		System.out.println("<<MySynthMidi.terminate");
+	}
+
+	/**
+	 * Starts monitoring of MIDI constrollers and handling MIDI commands.
+	 */
+	public void start() {
+		System.out.println("<>MySynthMidi.start");
+		running = true;
+	}
+
+	/**
+	 * Stops monitoring MIDI controllers.
+	 */
+	public void stop() {
+		System.out.println("<>MySynthMidi.stop");
+		running = false;
 	}
 
 	/**
@@ -119,6 +143,9 @@ public abstract class MySynthMidi {
 	 * determine the message length when parsing midi and pad extra bytes (with zeros)
 	 */
 	void processMidi(byte byte1, byte byte2, byte byte3) {
+		if (!running) {
+			return;
+		}
 		if (synth == null) {
 			return;
 		}
