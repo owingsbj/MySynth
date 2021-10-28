@@ -36,15 +36,14 @@ static boolean detachCallback;
 static JavaVM * g_vm;
 static jobject g_obj;
 static jmethodID g_mid;
-static JNIEnv * g_env;
+static JNIEnv * thread_env;
 static boolean thread_attached;
 
 /**
  * dataCallback: this callback is called when more data is needed
  */
 aaudio_data_callback_result_t dataCallback(AAudioStream *stream, void *userData, void *audioData, int32_t numFrames) {
-	if (!started || g_vm == NULL) {
-		trace("  dataCallback:  not started");
+	if (g_vm == NULL) {   // not initialized
 		return AAUDIO_CALLBACK_RESULT_CONTINUE;
 	}
 	if (detachCallback) {
@@ -52,15 +51,15 @@ aaudio_data_callback_result_t dataCallback(AAudioStream *stream, void *userData,
 		(*g_vm)->DetachCurrentThread(g_vm);
 		started = false;
 		thread_attached = false;
+		detachCallback = false;
 		return AAUDIO_CALLBACK_RESULT_CONTINUE;
 	}
-	if (g_env == NULL) {
-		trace("  dataCallback:  getting g_env instance");
-		(*g_vm)->GetEnv(g_vm, &g_env, JNI_VERSION_1_6);
+	if (!started) {
+		return AAUDIO_CALLBACK_RESULT_CONTINUE;
 	}
 	if (!thread_attached) {
 		trace("  dataCallback:  attaching thread to jvm");
-		(*g_vm)->AttachCurrentThread(g_vm, &g_env, NULL); // need to call every time as new threads sometimes happen on old android 404
+		(*g_vm)->AttachCurrentThread(g_vm, &thread_env, NULL); // need to call every time as new threads sometimes happen on old android 404
 		thread_attached = true;
 	}
 
@@ -69,10 +68,10 @@ aaudio_data_callback_result_t dataCallback(AAudioStream *stream, void *userData,
 	if (numFrames * 4 > maxBufferSize) {
 		frames = maxBufferSize / 4;
 	}
-	(*g_env)->CallVoidMethod(g_env, g_obj, g_mid, frames);
+	(*thread_env)->CallVoidMethod(thread_env, g_obj, g_mid, frames);
 
 	// Write java buffer directly into the audioData array.
-	(*g_env)->GetShortArrayRegion(g_env, g_buffer, 0, frames * 2, audioData);
+	(*thread_env)->GetShortArrayRegion(thread_env, g_buffer, 0, frames * 2, audioData);
 
 	return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
@@ -134,19 +133,21 @@ JNIEXPORT void JNICALL Java_com_gallantrealm_mysynth_MySynthAAudio_nativeSetAffi
     trace("<<nativeSetAffinity ");
 }
 
-JNIEXPORT void JNICALL Java_com_gallantrealm_mysynth_MySynthAAudio_nativeDetachCallback(JNIEnv* env, jobject obj) {
-	trace(">>nativeDetachCallback");
-	detachCallback = true;
-	// wait till callback thread is detached
-	while (thread_attached) {
-		usleep(100000); // 10th of a second
-	}
-	trace("<<nativeDetachCallback");
-}
-
 JNIEXPORT void JNICALL Java_com_gallantrealm_mysynth_MySynthAAudio_nativeStop(JNIEnv* env, jobject obj) {
 	aaudio_result_t result;
 	trace(">>nativeStop");
+
+	started = false;
+
+	// signal callback thread to detach
+	detachCallback = true;
+
+	// wait till callback thread is detached or timeout..
+	int t = 0;
+	while (thread_attached && t < 20) {
+		usleep(100000); // 10th of a second
+		t += 1;
+	}
 
 	// Stop and close the stream
 	if (stream != NULL) {

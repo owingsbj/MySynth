@@ -133,12 +133,6 @@ public final class MySynthAAudio extends MySynth {
 	public void stop() {
 		pause();
 		if (isStarted) {
-			System.out.println("Calling nativeDetachCallback");
-			nativeDetachCallback();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
 			System.out.println("Calling nativeStop..");
 			nativeStop();
 			System.out.println("nativeStop completed");
@@ -252,8 +246,6 @@ public final class MySynthAAudio extends MySynth {
 	public native int nativeStart(int sampleRate, short[] buffer, int desiredBufferSize, int maxBufferSize);
 
 	public native void nativeSetAffinity(int cpu);
-
-	public native void nativeDetachCallback();
 
 	public native void nativeStop();
 
