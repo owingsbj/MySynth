@@ -5,8 +5,9 @@ import java.io.PrintStream;
 import android.content.Context;
 
 /**
- * MIDI support for MySynth. This is an abstract class. There are two concrete subclasses: one to use the Android MIDI
- * classes (available in Android 6.0+) and the other using USB device API directly.
+ * MIDI support for MySynth. This is an abstract class. There are three concrete subclasses: one to use the Android MIDI
+ * classes (available in Android 6.0+), one using USB device API directly, and a third to be used for creating MIDI services
+ * (available in Android API 30).
  */
 public abstract class MySynthMidi {
 
@@ -23,7 +24,9 @@ public abstract class MySynthMidi {
 	}
 
 	/**
-	 * Creates an instance of MySynthMidi based on the availabilty of MIDI support.
+	 * Creates an instance of MySynthMidi based on the availabilty of MIDI support.  If Android MIDI
+	 * is available, an instance of MySynthMidiAndroid is created.  Otherwise, MySynthMidiUSB is created.
+	 * (Note: For MIDI services, do not use this method.  Instead, create an instance of MySynthMidiService directly.)
 	 * 
 	 * @param context
 	 *            the application context
