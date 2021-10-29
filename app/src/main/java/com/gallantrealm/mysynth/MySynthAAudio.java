@@ -21,6 +21,7 @@ public final class MySynthAAudio extends MySynth {
 
 	boolean isStarted = false;
 	boolean isRunning = false;
+	int jniData;  // used by native code
 
 	short[] buffer;
 	final int framesPerBuffer;
@@ -116,15 +117,7 @@ public final class MySynthAAudio extends MySynth {
 			firstTime = true;
 			// Start up things on the native side
 			System.out.println("Calling nativeStart(" + SAMPLE_RATE + ",buffer," + desiredBuffsize + "," + (buffer.length / 2) + ")");
-			int rc = nativeStart(SAMPLE_RATE, buffer, desiredBuffsize, buffer.length / 2);
-			if (rc == 0) {
-				System.out.println("nativeStart completed successfully");
-				isRunning = true;
-				isStarted = true;
-			} else {
-				System.out.println("nativeStart failed");
-				throw new Exception("Synthesis failed to start (rc=" + rc + ").  There is likely a problem supporting your device.  Email support@gallantrealm.com for help. ");
-			}
+			jniData = nativeStart(SAMPLE_RATE, buffer, desiredBuffsize, buffer.length / 2);
 		}
 		resume();
 	}
@@ -134,7 +127,7 @@ public final class MySynthAAudio extends MySynth {
 		pause();
 		if (isStarted) {
 			System.out.println("Calling nativeStop..");
-			nativeStop();
+			nativeStop(jniData);
 			System.out.println("nativeStop completed");
 			isStarted = false;
 		}
@@ -247,7 +240,7 @@ public final class MySynthAAudio extends MySynth {
 
 	public native void nativeSetAffinity(int cpu);
 
-	public native void nativeStop();
+	public native void nativeStop(int jniData);
 
 	boolean firstTime = true;
 	float[] output = new float[2];
