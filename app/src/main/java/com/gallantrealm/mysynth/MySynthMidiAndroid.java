@@ -71,6 +71,10 @@ public class MySynthMidiAndroid extends MySynthMidi {
 		final MidiManager midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
 		System.out.println("MySynthMidiAndroid: MIDI device added: "
 				+ device.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME));
+		if (device.getType() == MidiDeviceInfo.TYPE_VIRTUAL) {
+			System.out.println("MySynthMidiAndroid: Ignoring device as it is virtual.");
+			return;
+		}
 		PortInfo outputPortToUse = null;
 		for (PortInfo portInfo : device.getPorts()) {
 			System.out.println("MySynthMidiAndroid:   Device port " + portInfo.getPortNumber() + " type "
