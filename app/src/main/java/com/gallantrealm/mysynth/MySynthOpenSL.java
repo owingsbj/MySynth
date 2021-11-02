@@ -403,7 +403,7 @@ public final class MySynthOpenSL extends MySynth {
 
 	public final void play() {
 		try {
-			if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
+			if (instrument != null && !instrument.isEditing() && (instrument.isSounding() || recording || replaying)) {
 				for (int i = 0; i < samplesPerBuff; i++) {
 					if (!isRunning) {
 						return;

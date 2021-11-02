@@ -263,7 +263,7 @@ public final class MySynthAAudio extends MySynth {
 			firstTime = false;
 		}
 		try {
-			if (instrument != null && !instrument.isEditing() && instrument.isSounding()) {
+			if (instrument != null && !instrument.isEditing() && (instrument.isSounding() || recording || replaying)) {
 				for (int i = 0; i < numFrames; i++) {
 					instrument.generate(output);
 					float left = output[0];
