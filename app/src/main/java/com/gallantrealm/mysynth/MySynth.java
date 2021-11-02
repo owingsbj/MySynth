@@ -1,6 +1,8 @@
 package com.gallantrealm.mysynth;
 
 import java.io.IOException;
+import java.io.OutputStream;
+
 import android.content.Context;
 import android.os.Build;
 
@@ -120,10 +122,10 @@ public abstract class MySynth {
 
 	/**
 	 * Saves the recorded sound to a file.
-	 * @param filename the name of the file to save the sound.
+	 * @param outputStream an output stream to write the sound file.
 	 * @throws IOException
 	 */
-	public abstract void saveRecording(String filename) throws IOException;
+	public abstract void saveRecording(OutputStream outputStream) throws IOException;
 
 	/**
 	 * Returns the length of the recorded sound in seconds.

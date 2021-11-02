@@ -179,12 +179,11 @@ public final class MySynthAAudio extends MySynth {
 	}
 
 	@Override
-	public void saveRecording(String filename) throws IOException {
-		write_wav(filename, maxRecordingIndex, recordBuffer);
+	public void saveRecording(OutputStream outputStream) throws IOException {
+		write_wav(outputStream, maxRecordingIndex, recordBuffer);
 	}
 
-	void write_wav(String filename, int num_samples, short[] data) throws IOException {
-		OutputStream wav_file;
+	void write_wav(OutputStream wav_file, int num_samples, short[] data) throws IOException {
 		int num_channels;
 		int bytes_per_sample;
 		int byte_rate;
@@ -193,8 +192,6 @@ public final class MySynthAAudio extends MySynth {
 		bytes_per_sample = 2;
 
 		byte_rate = SAMPLE_RATE * num_channels * bytes_per_sample;
-
-		wav_file = new BufferedOutputStream(new FileOutputStream(filename));
 
 		/* write RIFF header */
 		wav_file.write("RIFF".getBytes());
