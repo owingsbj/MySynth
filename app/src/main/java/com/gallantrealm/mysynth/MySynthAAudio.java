@@ -118,6 +118,8 @@ public final class MySynthAAudio extends MySynth {
 			// Start up things on the native side
 			System.out.println("Calling nativeStart(" + SAMPLE_RATE + ",buffer," + desiredBuffsize + "," + (buffer.length / 2) + ")");
 			jniData = nativeStart(SAMPLE_RATE, buffer, desiredBuffsize, buffer.length / 2);
+			isRunning = true;
+			isStarted = true;
 		}
 		resume();
 	}
