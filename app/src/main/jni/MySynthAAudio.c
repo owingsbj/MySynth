@@ -158,32 +158,39 @@ JNIEXPORT void JNICALL Java_com_gallantrealm_mysynth_MySynthAAudio_nativeStop(JN
 	data->detachCallback = true;
 
 	// wait till callback thread is detached or timeout..
+	trace("  nativestop: waiting for callback thread to detach");
 	int t = 0;
 	while (data->thread_attached && t < 20) {
 		usleep(100000); // 10th of a second
 		t += 1;
 	}
+	trace("  nativestop: callback thread detached");
 
 	// Stop and close the stream
 	if (data->stream != NULL) {
+		trace("  nativestop: requesting audio stream stop");
 		int64_t timeoutNanos = 1000 * 1000000;
 		aaudio_stream_state_t nextState = AAUDIO_STREAM_STATE_UNINITIALIZED;
 		result = AAudioStream_requestStop(data->stream);
 		result = AAudioStream_waitForStateChange(data->stream, AAUDIO_STREAM_STATE_STOPPING, &nextState, timeoutNanos);
+		trace("  nativestop: closing audio stream");
 		result = AAudioStream_close(data->stream);
 		data->stream = NULL;
 	}
 
 	// Done with the audio stream builder, so delete it
 	if (data->builder != NULL) {
+		trace("  nativestop: deleating audio stream builder");
 		AAudioStreamBuilder_delete(data->builder);
 		data->builder = NULL;
 	}
 
 	// Cleanup JVM
+	trace("  nativestop: deleting global refs");
 	(*env)->DeleteGlobalRef(env, data->g_obj);
 	(*env)->DeleteGlobalRef(env, data->g_buffer);
 
+	trace("  nativestop: freeing jnidata");
 	free(data);
 
 	trace("<<nativeStop");

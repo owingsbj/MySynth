@@ -118,7 +118,6 @@ public final class MySynthAAudio extends MySynth {
 			// Start up things on the native side
 			System.out.println("Calling nativeStart(" + SAMPLE_RATE + ",buffer," + desiredBuffsize + "," + (buffer.length / 2) + ")");
 			jniData = nativeStart(SAMPLE_RATE, buffer, desiredBuffsize, buffer.length / 2);
-			isRunning = true;
 			isStarted = true;
 		}
 		resume();
@@ -128,10 +127,13 @@ public final class MySynthAAudio extends MySynth {
 	public void stop() {
 		pause();
 		if (isStarted) {
-			System.out.println("Calling nativeStop..");
-			nativeStop(jniData);
-			System.out.println("nativeStop completed");
+			if (jniData != 0) {
+				System.out.println("Calling nativeStop..");
+				nativeStop(jniData);
+				System.out.println("nativeStop completed");
+			}
 			isStarted = false;
+			jniData = 0;
 		}
 	}
 
