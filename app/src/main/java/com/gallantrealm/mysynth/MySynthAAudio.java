@@ -21,7 +21,7 @@ public final class MySynthAAudio extends MySynth {
 
 	boolean isStarted = false;
 	boolean isRunning = false;
-	int jniData;  // used by native code
+	long jniData;  // used by native code
 
 	short[] buffer;
 	final int framesPerBuffer;
@@ -237,11 +237,11 @@ public final class MySynthAAudio extends MySynth {
 		return recordingIndex / SAMPLE_RATE / 2;
 	}
 
-	public native int nativeStart(int sampleRate, short[] buffer, int desiredBufferSize, int maxBufferSize);
+	public native long nativeStart(int sampleRate, short[] buffer, int desiredBufferSize, int maxBufferSize);
 
 	public native void nativeSetAffinity(int cpu);
 
-	public native void nativeStop(int jniData);
+	public native void nativeStop(long jniData);
 
 	boolean firstTime = true;
 	float[] output = new float[2];
