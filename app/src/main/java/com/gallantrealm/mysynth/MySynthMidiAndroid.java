@@ -79,13 +79,10 @@ public class MySynthMidiAndroid extends MySynthMidi {
 		for (PortInfo portInfo : device.getPorts()) {
 			System.out.println("MySynthMidiAndroid: Device port " + portInfo.getPortNumber() + " type "
 					+ ((portInfo.getType() == 1) ? "INPUT" : "OUTPUT") + " " + portInfo.getName());
-			if (portInfo.getType() == PortInfo.TYPE_OUTPUT) {
+			if (portInfo.getType() == PortInfo.TYPE_OUTPUT  && outputPortToUse == null) {
 				// Note: output port means output of the device. It is thus input to other devices.
-				// Use the first output port found (assume it's the MIDI keyboard) or a port with
-				// MIDI in the name.
-				if (outputPortToUse == null || portInfo.getName().contains("MIDI")) {
-					outputPortToUse = portInfo;
-				}
+				// Use the first output port found, assuming it is the keyboard.
+				outputPortToUse = portInfo;
 			}
 		}
 
