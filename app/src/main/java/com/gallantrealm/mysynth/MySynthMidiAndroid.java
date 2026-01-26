@@ -91,47 +91,52 @@ public class MySynthMidiAndroid extends MySynthMidi {
 
 			final int outputPortNum = (outputPortToUse != null) ? outputPortToUse.getPortNumber() : -1;
 
-			midiManager.openDevice(device, new MidiManager.OnDeviceOpenedListener() {
-				public void onDeviceOpened(MidiDevice device) {
-					try {
-						if (device == null) {
-							System.out.println("MySynthMidiAndroid: Could not open device " + device);
-						} else {
-							System.out.println("MySynthMidiAndroid: Device opened.");
-							outputDevice = device;
-							if (outputPortNum >= 0) {
-								outputPort = device.openOutputPort(outputPortNum);
-								if (outputPort == null) {
-									System.out.println(
-											"MySynthMidiAndroid: Output port could not be opened on the device");
-								} else {
-									if (logMidi) {
-										File file = new File(context.getExternalFilesDir(null), "midilog.txt");
-										if (file.exists()) {
-											file.delete();
+			try {
+				midiManager.openDevice(device, new MidiManager.OnDeviceOpenedListener() {
+					public void onDeviceOpened(MidiDevice device) {
+						try {
+							if (device == null) {
+								System.out.println("MySynthMidiAndroid: Could not open device " + device);
+							} else {
+								System.out.println("MySynthMidiAndroid: Device opened.");
+								outputDevice = device;
+								if (outputPortNum >= 0) {
+									outputPort = device.openOutputPort(outputPortNum);
+									if (outputPort == null) {
+										System.out.println(
+												"MySynthMidiAndroid: Output port could not be opened on the device");
+									} else {
+										if (logMidi) {
+											File file = new File(context.getExternalFilesDir(null), "midilog.txt");
+											if (file.exists()) {
+												file.delete();
+											}
+											try {
+												midiLogStream = new PrintStream(file);
+											} catch (FileNotFoundException e) {
+												e.printStackTrace();
+											}
 										}
-										try {
-											midiLogStream = new PrintStream(file);
-										} catch (FileNotFoundException e) {
-											e.printStackTrace();
+										midiReceiver = new MySynthMidiReceiver(MySynthMidiAndroid.this);
+										outputPort.connect(midiReceiver);
+										System.out.println("MySynthMidiAndroid: Midi receiver connected!");
+										midiDeviceAttached = true;
+										if (callbacks != null) {
+											callbacks.onDeviceAttached(device.getInfo().getProperties()
+													.getString(MidiDeviceInfo.PROPERTY_NAME));
 										}
-									}
-									midiReceiver = new MySynthMidiReceiver(MySynthMidiAndroid.this);
-									outputPort.connect(midiReceiver);
-									System.out.println("MySynthMidiAndroid: Midi receiver connected!");
-									midiDeviceAttached = true;
-									if (callbacks != null) {
-										callbacks.onDeviceAttached(device.getInfo().getProperties()
-												.getString(MidiDeviceInfo.PROPERTY_NAME));
 									}
 								}
 							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
-				}
-			}, new Handler(Looper.getMainLooper()));
+				}, new Handler(Looper.getMainLooper()));
+			} catch (RuntimeException e) {
+				// exceptions can happen when opening the device if the device has already been removed
+				e.printStackTrace();
+			}
 		}
 	}
 
